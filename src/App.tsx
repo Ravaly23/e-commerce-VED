@@ -1,7 +1,7 @@
+import BarreNavigation from "./Components/BarreNavigation"
 
-
-function App() {
- return(<h1></h1>)
+function App(){
+   return <BarreNavigation />
 }
 
 export default App

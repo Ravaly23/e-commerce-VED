@@ -245,7 +245,7 @@ function Accueil() {
         </section>
         {/* --- SECTION 4: BANNER ROUGE (SUMMER SALE) --- */}
         <section className="py-10 px-10">
-          <div className="bg-[#f42c37] rounded-[40px] min-h-[400px] relative overflow-hidden flex items-center p-12">
+          <div className="bg-[#f42c37] rounded-[40px] min-h-100 relative overflow-hidden flex items-center p-12">
             <div className="container mx-auto grid grid-cols-1 md:grid-cols-3 items-center gap-8">
               {/* Colonne Gauche : Promo */}
               <div className="text-white z-10">
@@ -271,7 +271,7 @@ function Accueil() {
                 <h3 className="text-5xl font-bold leading-tight">
                   Summer sale
                 </h3>
-                <p className="text-sm opacity-90 max-w-[250px] md:ml-auto">
+                <p className="text-sm opacity-90 max-w-62.5 md:ml-auto">
                   Experience the best and quality headphones over here.
                 </p>
                 <button className="bg-white text-[#f42c37] px-10 py-3 rounded-full font-bold hover:bg-gray-100 transition-all">

@@ -1,7 +1,7 @@
-import BarreNavigation from "./Components/BarreNavigation"
+import  Accueil from "./Pages/Accueil"
 
 function App(){
-   return <BarreNavigation />
+   return <Accueil />
 }
 
 export default App

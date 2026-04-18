@@ -1,9 +1,11 @@
+from django.contrib.auth.models import User
 from django.db import models
 
 # Create your models here.
 
 
 class Personne(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     id = models.CharField(max_length=100, primary_key=True)
     nom_prenom = models.CharField(max_length=100)
     numero_telephone = models.CharField(max_length=20, blank=True, null=True)

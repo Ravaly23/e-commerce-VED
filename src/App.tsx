@@ -1,7 +1,7 @@
-import Admin from "./Pages/Admin"
+import Dashboard from "./Pages/Dashboard"
 
 function App() {
-    return (<Admin />)
+    return (<Dashboard />)
 
 }
 

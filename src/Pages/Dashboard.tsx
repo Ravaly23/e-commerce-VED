@@ -5,7 +5,7 @@ import BoiteListing from "../components/BoiteListing";
 import Carte from "../components/Carte";
 import Tableau from "../components/Tableau";
 
-function Admin() {
+function Dashboard() {
   return (
     <LayoutsLambako page={"admin"}>
       <div className="bg-gray-100 pb-10">
@@ -46,4 +46,4 @@ function Admin() {
   );
 }
 
-export default Admin;
+export default Dashboard;

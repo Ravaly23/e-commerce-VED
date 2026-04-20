@@ -1,6 +1,7 @@
-import Auth from "./Pages/Authentification"
+import Admin from "./Pages/Admin"
+
 function App() {
-    return (<Auth />)
+    return (<Admin />)
 
 }
 

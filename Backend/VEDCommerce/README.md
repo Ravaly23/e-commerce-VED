@@ -1,6 +1,5 @@
 # VEDCommerce Backend
 
-Ce dossier contient le code source du backend Django pour l'application e-commerce. L'environnement a été conteneurisé avec Docker pour garantir que le projet fonctionne de manière identique sur toutes les machines des développeurs ("fini le 'chez moi ça marche'").
 
 ## 📋 Pré-requis
 

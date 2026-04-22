@@ -9,7 +9,7 @@ export default function FormulaireConnexion() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="m-10 lg:px-15">
+        <div className="m-10 lg:px-15 lg:mx-25">
             <p className="mb-[36px] text-center text-white text-4xl font-serif">Login</p>
             <form>
                 <p className="pl-2.5 font-bold mb-[10px] text-white"> E-mail </p>

@@ -86,14 +86,16 @@ WSGI_APPLICATION = 'VEDCommerce.wsgi.application'
 #         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+import os
+
 DATABASES ={
     'default':{
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'vedcommerce',
-        'USER': 'Eizrah',
-        'PASSWORD': 'Eizrah17mars2003!',
-        'HOST': 'localhost',
-        'PORT': '3306',
+        'NAME': os.environ.get('DB_NAME', 'vedcommerce'),
+        'USER': os.environ.get('DB_USER', 'Eizrah'),
+        'PASSWORD': os.environ.get('DB_PASSWORD', 'Eizrah17mars2003!'),
+        'HOST': os.environ.get('DB_HOST', 'localhost'),
+        'PORT': os.environ.get('DB_PORT', '3306'),
     }
 }
 # Password validation

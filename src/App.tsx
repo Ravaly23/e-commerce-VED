@@ -1,7 +1,7 @@
-import Dashboard from "./Pages/Dashboard"
-
+// import Dashboard from "./Pages/Dashboard"
+import Etude from "./Pages/Etude"
 function App() {
-    return (<Dashboard />)
+    return (<Etude />)
 
 }
 

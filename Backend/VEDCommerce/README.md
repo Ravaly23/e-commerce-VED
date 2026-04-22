@@ -58,3 +58,9 @@ Il suffit d'activer votre environnement virtuel et de lancer :
 ```bash
 python manage.py runserver
 ```
+
+
+pour acceder au superAdmin 
+lien : http://localhost:3307/
+username : VEDAdmin
+password : VEDcommercepsw2003!

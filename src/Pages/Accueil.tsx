@@ -312,7 +312,7 @@ function Accueil() {
         </section>
       </main>
 
-      <footer className="bg-white pt-16 pb-8 px-10 border-t border-gray-100 shadow-sm">
+      <footer className="bg-gray-800 pt-16 pb-8 px-10 border-t border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
           {/* 1. LOGO ET DESCRIPTION */}
           <div className="space-y-4">

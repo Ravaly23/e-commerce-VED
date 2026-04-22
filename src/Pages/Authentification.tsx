@@ -22,7 +22,7 @@ export default function Auth() {
         <div className="relative w-screen h-screen grid grid-cols-1 xl:grid-cols-2 overflow-hidden" >
             <div className="absolute inset-0 bg-cover bg-center blur-xl scale-105" style={fond}></div>
             <div className="relative z-10">
-                <div className="relative my-10 mx-10 lg:mx-25 border border-black-500 border-white/30 rounded-xl h-10">
+                <div className="relative my-10 mx-10 lg:mx-40 border border-black-500 border-white/30 rounded-xl h-10">
                     <div
                         className={`absolute top-0 left-0 h-full w-1/2 bg-[#3C4382] rounded-xl transition-all duration-300 ${isLogin ? "translate-x-0" : "translate-x-full"
                             }`}

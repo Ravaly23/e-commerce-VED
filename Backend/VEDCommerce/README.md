@@ -61,6 +61,6 @@ python manage.py runserver
 
 
 pour acceder au superAdmin 
-lien : http://localhost:3307/
+lien : http://localhost:8000/admin/
 username : VEDAdmin
 password : VEDcommercepsw2003!

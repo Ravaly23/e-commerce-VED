@@ -27,7 +27,7 @@ class Client(Personne):
 
 
 class Vendeur(Personne):
-    etat = models.CharField(max_length=50, choices=[('En attente', 'En attente'), ('Actif', 'Actif'), ('Bloqué', 'Bloqué')])
+    etat = models.CharField(max_length=50, choices=[('En attente', 'En attente'), ('Actif', 'Actif'), ('Bloqué', 'Bloqué')], default='En attente')
 
     class Meta:
         verbose_name_plural = "Vendeurs"

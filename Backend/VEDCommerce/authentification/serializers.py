@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from django.contrib.auth.models import User
-from VedBackend.models import Client
-from fonction_utiles.Identifiant import creationIdentifiantClient
+from VedBackend.models import Client, Vendeur
+from fonction_utiles.Identifiant import creationIdentifiantClient, creationIdentifiantVendeur
 
 
 class InscriptionClientSerializer(serializers.Serializer):

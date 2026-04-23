@@ -1,6 +1,7 @@
 from django.urls import path
+
 from . import views
 
 urlpatterns = [
-    path ('',views.index, name='index')
+    path('ajout_article/',views.ajout_article, name='ajout_article')
 ]

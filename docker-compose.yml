@@ -15,6 +15,12 @@ services:
       - db_data:/var/lib/mysql
       # Ce volume charge le fichier SQL pour l'initialisation de la base
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "Eizrah", "-pEizrah17mars2003!"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   web:
     build: ./Backend/VEDCommerce
@@ -30,7 +36,8 @@ services:
       - DB_PASSWORD=Eizrah17mars2003!
       - DB_PORT=3306
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
 volumes:
   db_data:

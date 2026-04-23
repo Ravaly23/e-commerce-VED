@@ -8,12 +8,12 @@ def _get_dernier_numero(model, prefixe):
     extrait le numéro à la fin, et retourne le suivant.
     """
     # Récupérer tous les IDs qui commencent par le préfixe
-    derniers = model.objects.filter(id__startswith=prefixe).order_by('-id')
+    derniers = model.objects.filter(pk__startswith=prefixe).order_by('-pk')
 
     if not derniers.exists():
         return 1
 
-    dernier_id = derniers.first().id
+    dernier_id = derniers.first().pk
 
     # Extraire le numéro à la fin de l'identifiant (les 5 derniers caractères)
     try:

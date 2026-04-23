@@ -1,6 +1,7 @@
 services:
   db:
     image: mysql:8.0
+    command: --lower_case_table_names=1
     restart: always
     environment:
       MYSQL_DATABASE: 'vedcommerce'

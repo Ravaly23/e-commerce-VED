@@ -1,7 +1,9 @@
 
+
 services:
   db:
     image: mysql:8.0
+    command: --lower_case_table_names=1
     restart: always
     environment:
       MYSQL_DATABASE: 'vedcommerce'
@@ -15,7 +17,7 @@ services:
       # Ce volume charge le fichier SQL pour l'initialisation de la base
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "Eizrah", "-pEizrah17mars2003!"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "Eizrah", "-pEizrah17mars2003!" ]
       interval: 5s
       timeout: 5s
       retries: 10

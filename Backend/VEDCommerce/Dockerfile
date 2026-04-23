@@ -22,3 +22,10 @@ RUN pip install -r requirements.txt
 
 # Copy project
 COPY . /app/
+
+# Copy and set permissions for entrypoint script
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+# Use entrypoint script to wait for DB and run migrations
+ENTRYPOINT ["/app/entrypoint.sh"]

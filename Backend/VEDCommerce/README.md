@@ -26,7 +26,7 @@ docker-compose up --build
 *(L'option `--build` est recommandée au premier lancement ou lorsque le fichier `requirements.txt` est modifié pour forcer la reconstruction de l'image Python).*
 
 ### Que se passe-t-il lors de cette commande ?
-- Docker va télécharger l'image MySQL et l'image Python.
+- Docker va télécharger l'image My SQL et l'image Python.
 - Il va créer un conteneur pour la base de données (`db`). Lors du tout premier lancement, MySQL va lire le fichier `init.sql` situé à la racine et importer toutes les données automatiquement !
 - Il va installer toutes les dépendances Django (`requirements.txt`) et lancer le serveur sur le port `8000` (`web`).
 

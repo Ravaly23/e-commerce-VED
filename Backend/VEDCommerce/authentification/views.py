@@ -6,8 +6,7 @@ from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .serializers import InscriptionClientSerializer, ConnexionClientSerializer, InscrptionVendeur,ConnexionVendeur
-
-
+from VedBackend.models import Authentification
 @api_view(['POST'])
 @permission_classes([AllowAny])  # Pas besoin d'être connecté pour s'inscrire
 def inscription_client(request):
@@ -53,37 +52,35 @@ def connexion_client(request):
     serializer = ConnexionClientSerializer(data=request.data)
 
     if serializer.is_valid():
-        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
         password = serializer.validated_data['password']
 
-        # Vérifier les credentials
-        user = authenticate(username=username, password=password)
+        # La vérification de l'email et du mot de passe est déjà faite par serializer.is_valid()
+        auth_obj = Authentification.objects.get(email=email, password=password)
+        personne = auth_obj.id_personne
 
-        if user is not None:
-            # Vérifier que c'est bien un Client (pas un Vendeur)
-            if hasattr(user, 'client'):
-                refresh = RefreshToken.for_user(user)
+        # Vérifier que c'est bien un Client (et pas un Vendeur)
+        if hasattr(personne, 'client'):
+            client = personne.client
+            user = client.user
+            refresh = RefreshToken.for_user(user)
 
-                return Response({
-                    'message': 'Connexion réussie',
-                    'client': {
-                        'id': user.client.id,
-                        'nom_prenom': user.client.nom_prenom,
-                        'username': user.username,
-                    },
-                    'tokens': {
-                        'access': str(refresh.access_token),
-                        'refresh': str(refresh),
-                    }
-                })
-            else:
-                return Response({
-                    'message': 'Ce compte n\'est pas un compte client.'
-                }, status=status.HTTP_403_FORBIDDEN)
+            return Response({
+                'message': 'Connexion réussie',
+                'client': {
+                    'id': client.id,
+                    'nom_prenom': client.nom_prenom,
+                    'username': user.username,
+                },
+                'tokens': {
+                    'access': str(refresh.access_token),
+                    'refresh': str(refresh),
+                }
+            })
         else:
             return Response({
-                'message': 'Nom d\'utilisateur ou mot de passe incorrect.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
+                'message': 'Ce compte n\'est pas un compte client.'
+            }, status=status.HTTP_403_FORBIDDEN)
 
     return Response({
         'message': 'Données invalides',
@@ -130,52 +127,49 @@ def connexion_vendeur(request):
     serializer = ConnexionVendeur(data=request.data)
 
     if serializer.is_valid():
-        username = serializer.validated_data['username']
+        email = serializer.validated_data['email']
         password = serializer.validated_data['password']
 
-        # Vérifier les credentials
-        user = authenticate(username=username, password=password)
+        # La vérification de l'email et du mot de passe est déjà faite par serializer.is_valid()
+        auth_obj = Authentification.objects.get(email=email, password=password)
+        personne = auth_obj.id_personne
 
-        if user is not None:
-            # Vérifier que c'est bien un Vendeur
-            if hasattr(user, 'vendeur'):
-                vendeur = user.vendeur
+        # Vérifier que c'est bien un Vendeur
+        if hasattr(personne, 'vendeur'):
+            vendeur = personne.vendeur
+            user = vendeur.user
 
-                # Vérifier que le vendeur n'est pas bloqué
-                if vendeur.etat == 'Bloqué':
-                    return Response({
-                        'message': 'Votre compte vendeur a été bloqué.'
-                    }, status=status.HTTP_403_FORBIDDEN)
+            # Vérifier que le vendeur n'est pas bloqué
+            if vendeur.etat == 'Bloqué':
+                return Response({
+                    'message': 'Votre compte vendeur a été bloqué.'
+                }, status=status.HTTP_403_FORBIDDEN)
 
-                # Vérifier que le vendeur est actif ou en attente
-                if vendeur.etat in ['Actif', 'En attente']:
-                    refresh = RefreshToken.for_user(user)
+            # Vérifier que le vendeur est actif ou en attente
+            if vendeur.etat in ['Actif', 'En attente']:
+                refresh = RefreshToken.for_user(user)
 
-                    return Response({
-                        'message': 'Connexion réussie',
-                        'vendeur': {
-                            'id': vendeur.id,
-                            'nom_prenom': vendeur.nom_prenom,
-                            'username': user.username,
-                            'etat': vendeur.etat,
-                        },
-                        'tokens': {
-                            'access': str(refresh.access_token),
-                            'refresh': str(refresh),
-                        }
-                    })
-                else:
-                    return Response({
-                        'message': 'Statut de compte vendeur invalide.'
-                    }, status=status.HTTP_403_FORBIDDEN)
+                return Response({
+                    'message': 'Connexion réussie',
+                    'vendeur': {
+                        'id': vendeur.id,
+                        'nom_prenom': vendeur.nom_prenom,
+                        'username': user.username,
+                        'etat': vendeur.etat,
+                    },
+                    'tokens': {
+                        'access': str(refresh.access_token),
+                        'refresh': str(refresh),
+                    }
+                })
             else:
                 return Response({
-                    'message': 'Ce compte n\'est pas un compte vendeur.'
+                    'message': 'Statut de compte vendeur invalide.'
                 }, status=status.HTTP_403_FORBIDDEN)
         else:
             return Response({
-                'message': 'Nom d\'utilisateur ou mot de passe incorrect.'
-            }, status=status.HTTP_401_UNAUTHORIZED)
+                'message': 'Ce compte n\'est pas un compte vendeur.'
+            }, status=status.HTTP_403_FORBIDDEN)
 
     return Response({
         'message': 'Données invalides',

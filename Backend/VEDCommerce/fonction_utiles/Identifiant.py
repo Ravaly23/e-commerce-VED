@@ -1,4 +1,5 @@
-from VedBackend.models import Client, Vendeur, Article
+from VedBackend.models import Client, Vendeur, Article,Commentaire,Facture,Commande,Fichier
+
 
 
 def _get_dernier_numero(model, prefixe, id_field='id'):
@@ -71,6 +72,72 @@ def creationIdentifiantArticle(nom="Inconnu"):
     identifiant = f"{prefixe}{numero:05d}"
 
     while Article.objects.filter(id_article=identifiant).exists():
+        numero += 1
+        identifiant = f"{prefixe}{numero:05d}"
+
+    return identifiant
+
+def creationIdentifiantCommentaire():
+    """
+    Crée un identifiant unique pour un Commentaire.
+    Format : Commentaire00001
+    """
+
+    prefixe = f"Commentaire"
+    numero = _get_dernier_numero(Commentaire, prefixe, id_field='id_commentaire')
+    identifiant = f"{prefixe}{numero:05d}"
+
+    while Commentaire.objects.filter(id_commentaire=identifiant).exists():
+        numero += 1
+        identifiant = f"{prefixe}{numero:05d}"
+
+    return identifiant
+
+def creationIdentifiantFacture():
+    """
+    Crée un identifiant unique pour une Facture.
+    Format : Facture00001
+    """
+  
+    prefixe = f"Facture"
+    numero = _get_dernier_numero(Facture, prefixe, id_field='id_facture')
+    identifiant = f"{prefixe}{numero:05d}"
+
+    while Facture.objects.filter(id_facture=identifiant).exists():
+        numero += 1
+        identifiant = f"{prefixe}{numero:05d}"
+
+    return identifiant
+
+
+def creationIdentifiantCommande():
+    """
+    Crée un identifiant unique pour une Commande.
+    Format : Commande00001
+    """
+   
+    prefixe = f"Commande"
+    numero = _get_dernier_numero(Commande, prefixe, id_field='id_commande')
+    identifiant = f"{prefixe}{numero:05d}"
+
+    while Commande.objects.filter(id_commande=identifiant).exists():
+        numero += 1
+        identifiant = f"{prefixe}{numero:05d}"
+
+    return identifiant
+
+
+def creationIdentifiantFichier():
+    """
+    Crée un identifiant unique pour un Fichier.
+    Format : Fichier00001
+    """
+  
+    prefixe = f"Fichier"
+    numero = _get_dernier_numero(Fichier, prefixe, id_field='id_fichier')
+    identifiant = f"{prefixe}{numero:05d}"
+
+    while Fichier.objects.filter(id_fichier=identifiant).exists():
         numero += 1
         identifiant = f"{prefixe}{numero:05d}"
 

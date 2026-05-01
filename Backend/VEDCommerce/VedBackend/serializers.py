@@ -33,3 +33,104 @@ class AjoutArticle(serializers.Serializer):
         )
 
         return article
+
+class ArticleSerializer(serializers.ModelSerializer):
+    date_ajout_relative = serializers.CharField(read_only=True)
+
+    class Meta:
+        model = Article
+        fields = '__all__'
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields['date_ajout_relative'] = serializers.CharField(read_only=True)
+        return fields
+
+from VedBackend.models import Client, Commentaire
+from fonction_utiles.Identifiant import creationIdentifiantCommentaire
+
+class AjoutCommentaire(serializers.Serializer):
+    id_client = serializers.CharField(max_length=100)
+    id_article = serializers.CharField(max_length=100)
+    description = serializers.CharField(required=False, allow_blank=True)
+
+    def validate(self, data):
+        # Vérifie que le client existe
+        if not Client.objects.filter(id=data.get('id_client')).exists():
+            raise serializers.ValidationError({"id_client": "Ce client n'existe pas."})
+        # Vérifie que l'article existe
+        if not Article.objects.filter(id_article=data.get('id_article')).exists():
+            raise serializers.ValidationError({"id_article": "Cet article n'existe pas."})
+        return data
+
+    def create(self, validated_data):
+        client = Client.objects.get(id=validated_data.pop('id_client'))
+        article = Article.objects.get(id_article=validated_data.pop('id_article'))
+        
+        id_commentaire = creationIdentifiantCommentaire()
+        
+        commentaire = Commentaire.objects.create(
+            id_commentaire=id_commentaire,
+            id_client=client,
+            id_article=article,
+            **validated_data
+        )
+        return commentaire
+
+class CommentaireSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Commentaire
+        fields = '__all__'
+
+class AjoutFacture(serializers.Serializer):
+    id_facture = serializers.CharField(read_only=True)
+    date_paiement = serializers.DateField()
+    prix_total_commande = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    def create(self, validated_data):
+        from fonction_utiles.Identifiant import creationIdentifiantFacture
+        from VedBackend.models import Facture
+        id_facture = creationIdentifiantFacture()
+        facture = Facture.objects.create(
+            id_facture=id_facture,
+            **validated_data
+        )
+        return facture
+
+class AjoutCommande(serializers.Serializer):
+    id_commande = serializers.CharField(read_only=True)
+    date_commande = serializers.DateTimeField(read_only=True)
+    id_client = serializers.CharField(max_length=100)
+    id_article = serializers.CharField(max_length=100)
+    id_facture = serializers.CharField(max_length=100)
+    quantite = serializers.IntegerField(default=1)
+    prix_total_article = serializers.DecimalField(max_digits=10, decimal_places=2)
+
+    def validate(self, data):
+        from VedBackend.models import Client, Article, Facture
+        if not Client.objects.filter(id=data.get('id_client')).exists():
+            raise serializers.ValidationError({"id_client": "Ce client n'existe pas."})
+        if not Article.objects.filter(id_article=data.get('id_article')).exists():
+            raise serializers.ValidationError({"id_article": "Cet article n'existe pas."})
+        if not Facture.objects.filter(id_facture=data.get('id_facture')).exists():
+            raise serializers.ValidationError({"id_facture": "Cette facture n'existe pas."})
+        return data
+
+    def create(self, validated_data):
+        from fonction_utiles.Identifiant import creationIdentifiantCommande
+        from VedBackend.models import Client, Article, Facture, Commande
+        
+        client = Client.objects.get(id=validated_data.pop('id_client'))
+        article = Article.objects.get(id_article=validated_data.pop('id_article'))
+        facture = Facture.objects.get(id_facture=validated_data.pop('id_facture'))
+        
+        id_commande = creationIdentifiantCommande()
+        
+        commande = Commande.objects.create(
+            id_commande=id_commande,
+            id_client=client,
+            id_article=article,
+            id_facture=facture,
+            **validated_data
+        )
+        return commande

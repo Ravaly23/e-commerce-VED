@@ -9,7 +9,7 @@ export default function Etude() {
       setSecondes(s => s + 1);
     }, 1000);
 
-    // 2. LA FONCTION DE NETTOYAGE (Crucial !)
+    // 2. LA FONCTION DE NETTOYAGE
     // Elle s'exécute quand le composant est détruit
     return () => clearInterval(intervalle);
   }, []); // [] signifie : démarre seulement au chargement

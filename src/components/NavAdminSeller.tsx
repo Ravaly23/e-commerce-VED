@@ -5,12 +5,13 @@ import Input from "./Input";
 import { useState } from "react";
 export default function NavAdmin() {
   const [valueSearch,setValueSearch] = useState("");
+
   return (
     <>
       <nav className="flex items-center justify-between px-5 py-4 bg-white shadow-sm">
         {/* 1. LOGO */}
         <div className="shrink-0">
-          <h1 className="text-2xl font-bold tracking-tighter italic text-red-600">
+          <h1 className="text-2xl font-bold tracking-tighter italic text-red-600 hover:cursor-pointer">
             E-<span className="text-black">Lambako</span>
           </h1>
         </div>

@@ -26,7 +26,7 @@ export default function FormulaireInscription() {
         }
     }
     return (
-        <div className="m-10 lg:px-15 lg:mx-25">
+        <div className="mx-10 lg:px-15 lg:mx-25">
             <p className="mb-[36px] text-center text-white text-4xl font-serif">Sign Up</p>
             <p className="pl-2.5 font-bold mb-[10px] text-white"> E-mail </p>
             <Input

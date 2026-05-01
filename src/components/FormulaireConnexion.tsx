@@ -9,7 +9,7 @@ export default function FormulaireConnexion() {
     const [showPassword, setShowPassword] = useState(false);
 
     return (
-        <div className="m-10 lg:px-15 lg:mx-25">
+        <div className="mx-10 lg:px-15 lg:mx-25">
             <p className="mb-[36px] text-center text-white text-4xl font-serif">Login</p>
             <form>
                 <p className="pl-2.5 font-bold mb-[10px] text-white"> E-mail </p>
@@ -34,7 +34,7 @@ export default function FormulaireConnexion() {
                     marginBottom="36px"
                 />
                 <div className="flex justify-between text-sm md:text-lg lg:text-10">
-                    <div><input type="radio" name="" id="" /> Remember me</div>
+                    <div><input type="checkbox" name="" id="" /> Remember me</div>
                     <p className="text-[#1C89B6] font-medium"><a href="http://">Forgot password?</a></p>
                 </div>
                 <Button

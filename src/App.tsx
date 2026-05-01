@@ -1,8 +1,8 @@
-
+import ProfilSeller from "./Pages/ProfilSeller"
 import Home from "./Pages/Home"
 
 function App() {
-    return (<Home />)
+    return (<ProfilSeller />)
 }
 
 export default App

@@ -18,4 +18,8 @@ urlpatterns = [
     # Commande et Facture
     path('ajout_commande/',views.ajout_commande, name='ajout_commande'),
     path('ajout_facture/',views.ajout_facture, name='ajout_facture'),
+    
+    # Gestion vendeurs
+    path('confirmer_vendeur/<str:pk>/',views.confirmer_vendeur, name='confirmer_vendeur'),
+    path('refuser_vendeur/<str:pk>/',views.refuser_vendeur, name='refuser_vendeur'),
 ]

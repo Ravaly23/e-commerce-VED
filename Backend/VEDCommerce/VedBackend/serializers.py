@@ -35,9 +35,16 @@ class AjoutArticle(serializers.Serializer):
         return article
 
 class ArticleSerializer(serializers.ModelSerializer):
+    date_ajout_relative = serializers.CharField(read_only=True)
+
     class Meta:
         model = Article
         fields = '__all__'
+
+    def get_fields(self):
+        fields = super().get_fields()
+        fields['date_ajout_relative'] = serializers.CharField(read_only=True)
+        return fields
 
 from VedBackend.models import Client, Commentaire
 from fonction_utiles.Identifiant import creationIdentifiantCommentaire

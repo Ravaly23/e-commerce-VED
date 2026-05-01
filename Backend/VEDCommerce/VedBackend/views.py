@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from django.shortcuts import get_object_or_404
 from .serializers import (AjoutArticle, ArticleSerializer, AjoutCommentaire, 
                           CommentaireSerializer, AjoutCommande, AjoutFacture)
-from .models import Article, Commentaire
+from .models import Article, Commentaire, Vendeur
 
 #Article 
 @api_view(['POST'])
@@ -184,3 +184,27 @@ def ajout_facture(request):
         'message': 'Erreur lors de l\'ajout de la facture',
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+
+#confirmer un vendeur
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def confirmer_vendeur(request, pk):
+    vendeur = get_object_or_404(Vendeur, pk=pk)
+    vendeur.etat = 'Actif'
+    vendeur.save()
+    return Response({
+        'message': 'Vendeur confirmé avec succès',
+    }, status=status.HTTP_200_OK)
+
+#refuser un vendeur
+@api_view(['PUT'])
+@permission_classes([AllowAny])
+def refuser_vendeur(request, pk):
+    vendeur = get_object_or_404(Vendeur, pk=pk)
+    vendeur.etat = 'Bloqué'
+    vendeur.save()
+    return Response({
+        'message': 'Vendeur refusé avec succès',
+    }, status=status.HTTP_200_OK)
+    

@@ -16,7 +16,7 @@ interface ArticleProps{
 export default function Article({imagePrincipale,imageSeller,nameSeller,nameArticle,taille,marque,prix,nombreLike} : ArticleProps) {
 
     return (
-        <div className="relative bg-white w-[280px] rounded-2xl shadow-md hover:shadow-xl hover:scale-105 hover:shadow-lg transition duration-300 overflow-hidden">
+        <div className="relative bg-white w-full xl:w-[280px] rounded-2xl shadow-md hover:shadow-xl hover:scale-105 hover:shadow-lg transition duration-300 overflow-hidden">
 
             <div className="h-[280px] overflow-hidden">
                 <img

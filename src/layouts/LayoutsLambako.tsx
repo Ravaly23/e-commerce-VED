@@ -1,18 +1,15 @@
 import type React from "react";
-import NavAccueil from "../components/NavAccueil";
-import NavAdmin from "../components/NavAdminSeller";
+import BarreNavigation from "../components/BarreNavigation";
 interface LayoutsProp{
     children? : React.ReactNode;
-    page?: String;
+    page?: string;
 }
 
 export default function LayoutsLambako({children , page}: LayoutsProp) {
   return (
     <>
       <header>
-        {
-            (page === "accueil") ?  <NavAccueil /> :  <NavAdmin />
-        }
+         <BarreNavigation type={page}/>
       </header>
       <main className="">
          {children}

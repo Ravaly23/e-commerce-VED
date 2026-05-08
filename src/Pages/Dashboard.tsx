@@ -5,51 +5,71 @@ import BoiteListing from "../components/BoiteListing";
 import Carte from "../components/Carte";
 import Tableau from "../components/Tableau";
 import MenuLateraux from "../components/MenuLateraux";
-
+import { useState } from "react";
+import { IoMdLogOut } from "react-icons/io";
 function Dashboard() {
   const donneeTab = [
     {
-      "id": 1,
-      "products": "Converse",
-      "categorie": "Shoes",
-      "prices": 40,
-      "views": 500,
-      "likes": 40,
-      "condition": "very good",
+      id: 1,
+      products: "Converse",
+      categorie: "Shoes",
+      prices: 40,
+      views: 500,
+      likes: 40,
+      condition: "very good",
     },
     {
-      "id": 2,
-      "products": "Converse",
-      "categorie": "Shoes",
-      "prices": 40,
-      "views": 500,
-      "likes": 40,
-      "condition": "very good",
+      id: 2,
+      products: "Converse",
+      categorie: "Shoes",
+      prices: 40,
+      views: 500,
+      likes: 40,
+      condition: "very good",
     },
-    
+
     {
-      "id": 2,
-      "products": "Conversekhgkgkgkkkkkkkkkkkkkkkkkkkkkyjyjyjyj",
-      "categorie": "Shoes",
-      "prices": 40,
-      "views": 500,
-      "likes": 40,
-      "condition": "very good",
+      id: 2,
+      products: "Conversekhgkgkgkkkkkkkkkkkkkkkkkkkkkyjyjyjyj",
+      categorie: "Shoes",
+      prices: 40,
+      views: 500,
+      likes: 40,
+      condition: "very good",
     },
     {
-      "id": 2,
-      "products": "Converse",
-      "categorie": "Shoes",
-      "prices": 40,
-      "views": 500,
-      "likes": 40,
-      "condition": "very good",
+      id: 2,
+      products: "Converse",
+      categorie: "Shoes",
+      prices: 40,
+      views: 500,
+      likes: 40,
+      condition: "very good",
     },
   ];
+  const [afficheT, setAfficheT] = useState("hidden");
+  const [activeListing, setActiveL] = useState("");
+  const [activeSetting, setActiveS] = useState("");
   return (
-    <LayoutsLambako page={"admin"}>
+    <LayoutsLambako page={"adminSeller"}>
       <div className="bg-gray-100 pb-10">
-        <MenuLateraux />
+        <MenuLateraux>
+          <ul className="flex flex-col gap-y-3 ju">
+            <li
+              className={`${activeListing} font-serif text-xl md:text-2xl hover:cursor-pointer`}
+            >
+              My Listing
+            </li>
+            <li
+              className={`${activeSetting} font-serif text-xl md:text-2xl hover:cursor-pointer`}
+            >
+              Settings
+            </li>
+          </ul>
+          <div className="">
+            <LinkButton text="Log out" icone={true} Icon={IoMdLogOut} />
+          </div>
+        </MenuLateraux>
         <div className="flex pt-5 pb-[5vw]  pr-[5vw] pl-[5vw] justify-between md:flex-row  md:pl-[4vw] md:pr-[4vw] md:pb-[2vw]">
           <div className="">
             <h1 className="font-serif text-[3.5vw] md:text-3xl mb-[1vw]">
@@ -73,7 +93,9 @@ function Dashboard() {
           <Carte type="courbe" />
           <Carte type="barre" />
         </div>
-        <div className="mx-8 my-10 border-white rounded-3xl shadow-bg-gray-100 shadow bg-white md:w-10/12 md:h-auto md:my-16 md:mx-25">
+        <div
+          className={`flex flex-col mx-8 my-10 border-white rounded-3xl shadow-bg-gray-100 shadow bg-white md:w-10/12 md:h-auto md:my-16 md:mx-25`}
+        >
           <div className="justify-between flex md:h-auto p-5 md:justify-between">
             <h1 className=" font-serif text-xl md:text-2xl">My Listing</h1>
             <p className="text-gray-400 font-serif text-xl md:text-xl">

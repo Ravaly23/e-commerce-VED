@@ -111,7 +111,7 @@ export default function Home() {
                     </form>
                 </aside>
                 <main className="">
-                    <div className=" grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3">
                         {
                             articleTab.map((item) =>
                                 <Article
@@ -134,3 +134,4 @@ export default function Home() {
 
     )
 }
+

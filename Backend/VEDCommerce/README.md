@@ -5,62 +5,93 @@
 
 Avant de lancer le projet, assurez-vous d'avoir les éléments suivants installés sur votre machine :
 
-1. **Docker** : [Télécharger Docker Desktop](https://www.docker.com/products/docker-desktop)
-2. **Docker Compose** : (Généralement inclus avec Docker Desktop)
-3. **Ports disponibles** : 
+1. **Python 3.12+** : [Télécharger Python](https://www.python.org/downloads/)
+2. **MySQL 8.0+** : [Télécharger MySQL](https://dev.mysql.com/downloads/)
+3. **Port disponible** :
    - Le port **`8000`** doit être libre (utilisé par le serveur Django).
-   - Le port **`3307`** doit être libre (utilisé par la base de données MySQL conteneurisée). *Note: Le port standard 3306 n'est pas utilisé pour éviter les conflits avec vos bases de données locales.*
+   - Le port **`3306`** doit être libre (utilisé par MySQL).
 
-## 🚀 Lancer le Backend (et la Base de Données)
+## 🗄️ Configuration de la Base de Données
 
-L'avantage de cette configuration est que la base de données MySQL et le serveur Django se lancent ensemble avec une seule commande, et la base est déjà pré-remplie avec des données.
+1. Assurez-vous que MySQL est installé et en cours d'exécution.
+2. Créez la base de données et l'utilisateur (si ce n'est pas déjà fait) :
 
-1. Ouvrez un terminal.
-2. Placez-vous à la **racine globale du projet** (le dossier qui contient le fichier `docker-compose.yml`, c'est-à-dire le dossier parent de `Backend`).
-3. Exécutez la commande suivante :
-
-```bash
-docker-compose up --build
+```sql
+CREATE DATABASE IF NOT EXISTS vedcommerce;
+CREATE USER IF NOT EXISTS 'Eizrah'@'localhost' IDENTIFIED BY 'Eizrah17mars2003!';
+GRANT ALL PRIVILEGES ON vedcommerce.* TO 'Eizrah'@'localhost';
+FLUSH PRIVILEGES;
 ```
 
-*(L'option `--build` est recommandée au premier lancement ou lorsque le fichier `requirements.txt` est modifié pour forcer la reconstruction de l'image Python).*
+3. **(Optionnel)** Pour charger les données initiales, importez le fichier `init.sql` situé à la racine du projet :
 
-### Que se passe-t-il lors de cette commande ?
-- Docker va télécharger l'image My SQL et l'image Python.
-- Il va créer un conteneur pour la base de données (`db`). Lors du tout premier lancement, MySQL va lire le fichier `init.sql` situé à la racine et importer toutes les données automatiquement !
-- Il va installer toutes les dépendances Django (`requirements.txt`) et lancer le serveur sur le port `8000` (`web`).
+```bash
+mysql -u Eizrah -p vedcommerce < ../../init.sql
+```
 
-### Accéder à l'API
-Une fois que le terminal affiche que le serveur est lancé, l'API est accessible à l'adresse :
-👉 **http://localhost:8000**
+4. Les informations de connexion se trouvent dans le fichier `.env` :
+   - **Hôte** : `localhost`
+   - **Port** : `3306`
+   - **Utilisateur** : `Eizrah`
+   - **Mot de passe** : `Eizrah17mars2003!`
+   - **Base de données** : `vedcommerce`
 
-Pour arrêter les serveurs, faites `Ctrl+C` dans le terminal, ou lancez la commande `docker-compose down`.
+## 🚀 Lancer le Backend
 
----
+> **Note :** Un environnement virtuel Python est déjà configuré dans le dossier `Backend/environnment/backendVed/` avec toutes les dépendances nécessaires.
 
-## 💾 Accéder à la Base de Données (Optionnel)
+### Étape 1 — Activer l'environnement virtuel
 
-Si vous avez besoin d'inspecter la base de données (par exemple avec MySQL Workbench, DBeaver ou phpMyAdmin), utilisez les informations de connexion suivantes :
+Ouvrez un terminal à la racine du projet, puis activez l'environnement :
 
-- **Hôte (Host)** : `localhost`
-- **Port** : `3307`
-- **Utilisateur (User)** : `Eizrah` (ou `root`)
-- **Mot de passe (Password)** : `Eizrah17mars2003!` (ou `rootpassword` pour root)
-- **Base de données (Database)** : `vedcommerce`
+```bash
+# Windows (PowerShell)
+.\Backend\environnment\backendVed\Scripts\Activate.ps1
 
----
+# Windows (CMD)
+Backend\environnment\backendVed\Scripts\activate.bat
 
-## 🛠️ Pour ceux qui veulent continuer de lancer sans Docker (Local pur)
+# macOS / Linux
+source Backend/environnment/backendVed/bin/activate
+```
 
-Si vous préférez lancer le backend manuellement via votre environnement virtuel Python local et votre propre base MySQL locale, c'est toujours possible. Le fichier `settings.py` a été conçu pour utiliser automatiquement votre configuration locale (port 3306, localhost) si Docker n'est pas utilisé. 
+### Étape 2 — Se placer dans le dossier du backend
 
-Il suffit d'activer votre environnement virtuel et de lancer :
+```bash
+cd Backend/VEDCommerce
+```
+
+### Étape 3 — Installer / mettre à jour les dépendances (si nécessaire)
+
+Si c'est la première utilisation ou si de nouvelles dépendances ont été ajoutées :
+
+```bash
+pip install -r requirements.txt
+```
+
+### Étape 4 — Exécuter les migrations
+
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+
+### Étape 5 — Lancer le serveur
+
 ```bash
 python manage.py runserver
 ```
 
 
-pour acceder au superAdmin 
-lien : http://localhost:8000/admin/
-username : VEDAdmin
-password : VEDcommercepsw2003!
+### Accéder à l'API
+L'API est accessible à l'adresse :
+👉 **http://localhost:8000**
+
+---
+
+## 🔑 Super Admin
+
+Pour accéder au panneau d'administration :
+- **Lien** : http://localhost:8000/admin/
+- **Username** : `VEDAdmin`
+- **Password** : `VEDcommercepsw2003!`

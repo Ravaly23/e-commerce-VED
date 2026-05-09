@@ -2,8 +2,8 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import Dashboard from './Pages/Dashboard'
-import { createBrowserRouter } from "react-router";
-import { RouterProvider } from "react-router/dom";
+import { createBrowserRouter } from "react-router-dom";
+import { RouterProvider } from "react-router-dom";
 import AddArticle from './Pages/AddArticle';
 import Accueil from './Pages/Accueil';
 import Auth from './Pages/Authentification';

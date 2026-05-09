@@ -10,9 +10,9 @@ export default function FormulaireConnexion() {
 
     return (
         <div className="sm:px-10 xl:px-20">
-            <p className="mb-[36px] text-center text-white text-4xl font-serif">Login</p>
+            <p className="mb-9 text-center text-white text-4xl font-serif">Login</p>
             <form>
-                <p className="pl-2.5 font-bold mb-[10px] text-white"> E-mail </p>
+                <p className="pl-2.5 font-bold mb-2.5 text-white"> E-mail </p>
                 <Input
                     type="email"
                     value={email}
@@ -21,7 +21,7 @@ export default function FormulaireConnexion() {
                     iconLeft={<FaEnvelope />}
                     marginBottom="36px"
                 />
-                <p className="pl-2.5 font-bold mb-[10px] text-white">Password</p>
+                <p className="pl-2.5 font-bold mb-2.5 text-white">Password</p>
                 <Input
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"

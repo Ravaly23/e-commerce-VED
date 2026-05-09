@@ -1,9 +1,8 @@
-import ProfilSeller from "./Pages/ProfilSeller"
-import Home from "./Pages/Home"
 import Auth from "./Pages/Authentification"
+import RegistrationCompletion from "./Pages/RegistrationCompletion"
 
 function App() {
-    return (<Auth />)
+    return (<RegistrationCompletion />)
 }
 
 export default App

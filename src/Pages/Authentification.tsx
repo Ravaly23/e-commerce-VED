@@ -1,6 +1,4 @@
 import { useState } from "react";
-// import Input from "../components/Input";
-// import { FaEnvelope } from "react-icons/fa";
 import FormulaireConnexion from "../components/FormulaireConnexion";
 import FormulaireInscription from "../components/FormulaireInscription";
 
@@ -16,8 +14,8 @@ export default function Auth() {
   }
 // my-10 mx-10 lg:mx-40
   return (
-    <div className="relative w-full h-screen flex justify-center items-center bg-gradient-to-tl from-[#422031] via-[#2D1B4E] to-[#000B1C]">
-      <div className="relative z-10  p-5 mx-5 sm:mx-10 sm:p-10 w-[100%] sm:w-[80%] xl:w-1/2 bg-white/[0.08] backdrop-blur-xl border border-white/[0.18] rounded-4xl shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.15)]">
+    <div className="relative w-full h-screen flex justify-center items-center bg-linear-to-tl from-[#422031] via-[#2D1B4E] to-[#000B1C]">
+      <div className="relative z-10  p-5 mx-5 sm:mx-10 sm:p-10 w-full sm:w-[80%] xl:w-1/2 bg-white/8 backdrop-blur-xl border border-white/18 rounded-4xl shadow-[0_8px_32px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.15)]">
         <div className="relative border border-black-500 border-white/30 rounded-xl h-10 sm:mx-10 xl:mx-20">
           <div
             className={`absolute top-0 left-0 h-full w-1/2 bg-[#3C4382] rounded-xl transition-all duration-300 ${

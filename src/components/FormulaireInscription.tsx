@@ -36,11 +36,11 @@ export default function FormulaireInscription() {
   };
   return (
     <div className="sm:px-10 xl:px-20">
-      <p className="mb-[36px] text-center text-white text-4xl font-serif">
+      <p className="mb-9 text-center text-white text-4xl font-serif">
         Sign Up
       </p>
       <form action="">
-        <p className="pl-2.5 font-bold mb-[10px] text-white"> E-mail </p>
+        <p className="pl-2.5 font-bold mb-2.5 text-white"> E-mail </p>
         <Input
           type="email"
           value={email}
@@ -49,7 +49,7 @@ export default function FormulaireInscription() {
           iconLeft={<FaEnvelope />}
           marginBottom="36px"
         />
-        <p className="pl-2.5 font-bold mb-[10px] text-white">Password</p>
+        <p className="pl-2.5 font-bold mb-2.5 text-white">Password</p>
         <Input
           type={showPassword ? "text" : "password"}
           value={password}
@@ -60,7 +60,7 @@ export default function FormulaireInscription() {
           iconRight={showPassword ? <FaEyeSlash /> : <FaEye />}
           marginBottom="36px"
         />
-        <p className="pl-2.5 font-bold mb-[10px] text-white">
+        <p className="pl-2.5 font-bold mb-2.5 text-white">
           Confirm your password
         </p>
         <Input

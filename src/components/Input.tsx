@@ -19,7 +19,7 @@ export default function Input({ type, placeholder, value, onChange, onClick,onKe
         <div className={`relative mb-[${marginBottom}]`}>
             {iconLeft && <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-[#3C4382]"> {iconLeft} </span>}
             <input
-                className="w-full bg-[#FFFFFF] rounded-[15px] h-10 p-[5px] pl-10 border-2 border-transparent hover:border-black focus:border-black outline-none"
+                className="w-full bg-[#FFFFFF] rounded-[15px] h-10 p-1.25 pl-10 border-2 border-transparent hover:border-black focus:border-black outline-none"
                 type={type}
                 placeholder={placeholder}
                 value={value}

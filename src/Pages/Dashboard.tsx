@@ -29,7 +29,7 @@ function Dashboard() {
     },
 
     {
-      id: 2,
+      id: 3,
       products: "Conversekhgkgkgkkkkkkkkkkkkkkkkkkkkkyjyjyjyj",
       categorie: "Shoes",
       prices: 40,
@@ -38,7 +38,7 @@ function Dashboard() {
       condition: "very good",
     },
     {
-      id: 2,
+      id: 4,
       products: "Converse",
       categorie: "Shoes",
       prices: 40,

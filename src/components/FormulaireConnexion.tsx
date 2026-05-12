@@ -8,9 +8,6 @@ export default function FormulaireConnexion() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     
-    // function login(){
-    //     const request = 
-    // }
     return (
         <div className="sm:px-10 xl:px-20">
             <p className="mb-9 text-center text-white text-4xl font-serif">Login</p>

@@ -30,11 +30,11 @@ const dataBart = [
 
 export default function Carte({ type }: { type: string }) {
   return (
-    <div className="mx-auto md:m-5 pb-25 h-120 w-11/12 md:w-1/2 bg-white p-4 rounded-xl shadow">
+    <div className="mx-auto md:m-5 pb-25 h-[300px] w-11/12 md:w-1/2 bg-white p-4 rounded-xl shadow">
       {type === "courbe" ? (
         <>
           <h1 className="pb-10 text-xl md:text-2xl">Sales Overview</h1>
-          <ResponsiveContainer width="100%" height="100%">
+          <ResponsiveContainer width="90%" height="90%">
             <LineChart data={dataLine}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="name" />

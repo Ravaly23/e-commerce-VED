@@ -5,6 +5,7 @@ import Accueil from "./Pages/Accueil";
 import Auth from "./Pages/Authentification";
 import Home from "./Pages/Home";
 import ProfilSeller from "./Pages/ProfilSeller";
+import Testes from "./Pages/Testes";
 
 const router = () => {
   return createBrowserRouter([
@@ -31,7 +32,10 @@ const router = () => {
     {
       path: "/profilxxxx",
       Component: ProfilSeller,
-    },
+    },{
+      path: "/testes",
+      Component: Testes
+    }
   ]);
 };
 

@@ -2,6 +2,7 @@ interface InputProps {
     type: string,
     placeholder: string,
     value: string,
+    name?: string,
     onChange: (e: React.ChangeEvent<HTMLInputElement>) => void,
     onClick?: () => void,
     onKeyUp? : () => void,
@@ -12,7 +13,7 @@ interface InputProps {
     passwordVerify? : boolean
 }
 
-export default function Input({ type, placeholder, value, onChange, onClick,onKeyUp,iconLeft, iconRight, iconValid, marginBottom,passwordVerify }: InputProps) {
+export default function Input({ type, placeholder, value,name, onChange, onClick,onKeyUp,iconLeft, iconRight, iconValid, marginBottom,passwordVerify }: InputProps) {
 
 
     return (
@@ -23,6 +24,7 @@ export default function Input({ type, placeholder, value, onChange, onClick,onKe
                 type={type}
                 placeholder={placeholder}
                 value={value}
+                name={name}
                 onChange={onChange}
                 onKeyUp={onKeyUp}
             />

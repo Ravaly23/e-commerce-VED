@@ -5,6 +5,7 @@ import Accueil from "./Pages/Accueil";
 import Auth from "./Pages/Authentification";
 import Home from "./Pages/Home";
 import ProfilSeller from "./Pages/ProfilSeller";
+import api from "./services/api";
 
 const router = () => {
   return createBrowserRouter([
@@ -23,6 +24,20 @@ const router = () => {
     {
       path: "/auth",
       Component: Auth,
+      action: async ({ request }) => {
+        const formData = await request.formData();
+
+        const body = {
+          email: formData.get("email"),
+          password: formData.get("password"),
+        };
+
+        try {
+          const {data} = await api.post('auth/connexion/',body)
+          console.log("teste avec loaders : "+data)
+        } catch (error) {       
+        }
+      },
     },
     {
       path: "/profilxxxx/home",
@@ -31,7 +46,7 @@ const router = () => {
     {
       path: "/profilxxxx",
       Component: ProfilSeller,
-    },
+    }
   ]);
 };
 

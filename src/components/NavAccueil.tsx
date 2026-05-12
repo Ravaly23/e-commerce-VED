@@ -1,3 +1,4 @@
+import LinkButton from "./LinkButton";
 export default function NavAccueil(){
    return (
     <>
@@ -40,9 +41,10 @@ export default function NavAccueil(){
 
           {/* 3. ACTIONS (Log in & Icons) */}
           <div className="flex items-center gap-x-4">
-            <button className="bg-gray-100 px-5 py-1.5 rounded-full text-sm font-semibold hover:bg-gray-200">
+            {/* <button className="bg-gray-100 px-5 py-1.5 rounded-full text-sm font-semibold hover:bg-gray-200">
               Log In
-            </button>
+            </button> */}
+            <LinkButton ref="/auth" text="log in" font="font-bold font-serif" couleur="#ffffff" background="#D3D3D3"/>
 
             {/* Icône Loupe (Simplifiée) */}
             <button className="p-2 hover:bg-gray-100 rounded-full">

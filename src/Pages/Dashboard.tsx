@@ -4,7 +4,7 @@ import { IoMdAdd } from "react-icons/io";
 import BoiteListing from "../components/BoiteListing";
 import Carte from "../components/Carte";
 import Tableau from "../components/Tableau";
-import MenuLateraux from "../components/MenuLateraux";
+// import MenuLateraux from "../components/MenuLateraux";
 import { useState } from "react";
 import { IoMdLogOut } from "react-icons/io";
 function Dashboard() {
@@ -53,7 +53,7 @@ function Dashboard() {
   return (
     <LayoutsLambako page={"adminSeller"}>
       <div className="bg-gray-100 pb-10">
-        <MenuLateraux>
+        {/* <MenuLateraux>
           <ul className="flex flex-col gap-y-3 ju">
             <li
               className={`${activeListing} font-serif text-xl md:text-2xl hover:cursor-pointer`}
@@ -69,7 +69,7 @@ function Dashboard() {
           <div className="">
             <LinkButton text="Log out" icone={true} Icon={IoMdLogOut} />
           </div>
-        </MenuLateraux>
+        </MenuLateraux> */}
         <div className="flex pt-5 pb-[5vw]  pr-[5vw] pl-[5vw] justify-between md:flex-row  md:pl-[4vw] md:pr-[4vw] md:pb-[2vw]">
           <div className="">
             <h1 className="font-serif text-[3.5vw] md:text-3xl mb-[1vw]">
@@ -80,7 +80,7 @@ function Dashboard() {
             </p>
           </div>
           <div>
-            <LinkButton icone={true} Icon={IoMdAdd} text="New listing" />
+            <LinkButton icone={true} Icon={IoMdAdd} text="New listing" ref="/profilxxxx/Add"/>
           </div>
         </div>
         <div className="flex flex-col gap-y-4 w-11/12 pb-10 mx-auto md:ml-[3.7vw] md:mr-[3.7vw] md:flex-row md:justify-between md:gap-y-0">

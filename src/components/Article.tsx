@@ -1,6 +1,6 @@
 //import tee_shirt from '../assets/tee-shirt.jfif'
 import { FaRegHeart } from 'react-icons/fa'
-import formatPrice from '../utils/formatPrice'
+import formatPrice from '@/utils/formatPrice'
 
 interface ArticleProps{
     imagePrincipale : string,
@@ -16,9 +16,9 @@ interface ArticleProps{
 export default function Article({imagePrincipale,imageSeller,nameSeller,nameArticle,taille,marque,prix,nombreLike} : ArticleProps) {
 
     return (
-        <div className="relative bg-white w-full xl:w-[280px] rounded-2xl shadow-md hover:shadow-xl hover:scale-105 hover:shadow-lg transition duration-300 overflow-hidden">
+        <div className="relative bg-white w-full xl:w-70 rounded-2xl shadow-md hover:shadow-xl hover:scale-105 transition duration-300 overflow-hidden">
 
-            <div className="h-[280px] overflow-hidden">
+            <div className="h-70 overflow-hidden">
                 <img
                     src={imagePrincipale}
                     alt="tee-shirt"
@@ -55,7 +55,7 @@ export default function Article({imagePrincipale,imageSeller,nameSeller,nameArti
                     </span>
                 </div>
 
-                <button className="size-[40px] bg-white text-white rounded-[50%] text-sm hover:bg-gray-200 transition absolute top-2 right-2 flex items-center justify-center cursor-pointer">
+                <button className="size-10 bg-white text-white rounded-[50%] text-sm hover:bg-gray-200 transition absolute top-2 right-2 flex items-center justify-center cursor-pointer">
                     <FaRegHeart className='text-black'/>
                 </button>
             </div>

@@ -1,7 +1,7 @@
 import { useState} from "react"
 import Article from "../components/Article"
 import Fieldset from "../components/Fieldset";
-import formatPrice from "../utils/formatPrice";
+import formatPrice from "@/utils/formatPrice";
 
 export default function Home() {
     const articleTab = [

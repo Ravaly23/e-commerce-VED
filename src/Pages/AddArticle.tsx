@@ -1,6 +1,9 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { IoMdCloudUpload, IoMdCloseCircle } from "react-icons/io";
 import LayoutsLambako from "../layouts/LayoutsLambako";
+import api from "@/services/api";
+import Bouton from "@/components/ButtonInput";
+
 interface ProductData {
   title: string;
   category: string;
@@ -9,6 +12,7 @@ interface ProductData {
   condition: string;
   price: string;
   description: string;
+  qte: number
 }
 
 export default function AddArticle() {
@@ -21,6 +25,7 @@ export default function AddArticle() {
     condition: "",
     price: "",
     description: "",
+    qte: 0,
   });
 
   // Handle Text Inputs
@@ -44,10 +49,33 @@ export default function AddArticle() {
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    console.log("Submitting Product:", { ...formData, images });
-    // Add your Laravel/Django API call here
+  const handleSubmit = async () => {
+    const data = new FormData();
+    data.append("nom",formData.title);
+    data.append("category",formData.category);
+    data.append("quantite",formData.qte.toString());
+    data.append("taille",formData.size);
+    data.append("marque",formData.brand);
+    data.append("condition",formData.condition);
+    data.append("id_vendeur","Vendeur00001");
+    data.append("description",formData.description);
+    data.append("prix",formData.price);
+
+    images.forEach((file)=>{
+      data.append("fichiers",file);
+    });
+    try {
+      const post = await api.postForm("article/ajout_article/", data,
+      {
+        headers: {
+           'Content-Type': 'multipart/form-data',
+        },
+      });
+      console.log(post.data);
+      // console.log(images);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -57,7 +85,9 @@ export default function AddArticle() {
           Item Details
         </h2>
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        {/* <form onSubmit={handleSubmit} className="space-y-6"> */}
+        <form action={handleSubmit} className="space-y-6">
+          
           {/* Title */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
@@ -86,9 +116,17 @@ export default function AddArticle() {
                 onChange={handleInputChange}
               >
                 <option value="">Select category</option>
-                <option value="shoes">Shoes</option>
-                <option value="clothing">Clothing</option>
-                <option value="accessories">Accessories</option>
+                <option value="Dress">Dress</option>
+                <option value="T-Shirt">T-Shirt</option>
+                <option value="HandBag">HandBag</option>
+                <option value="Socks">Socks</option>
+                <option value="Jacket">Jacket</option>
+                <option value="Scarf">Scarf</option>
+                <option value="Gloves">Gloves</option>
+                <option value="Koat">Koat</option>
+                <option value="Cap">Cap</option>
+                <option value="Blouse">Blouse</option>
+                <option value="Pants">Pants</option>
               </select>
             </div>
             <div>
@@ -119,9 +157,15 @@ export default function AddArticle() {
                 onChange={handleInputChange}
               >
                 <option value="">Select size</option>
-                <option value="S">Small</option>
-                <option value="M">Medium</option>
-                <option value="L">Large</option>
+                <option value="XS">XS</option>
+                <option value="S">S</option>
+                <option value="M">M</option>
+                <option value="L">L</option>
+                <option value="XL">XL</option>
+                <option value="XXL">XXL</option>
+                <option value="2XL">2XL</option>
+                <option value="3XL">3XL</option>
+                <option value="4XL">4XL</option>
               </select>
             </div>
             <div>
@@ -141,11 +185,24 @@ export default function AddArticle() {
               </select>
             </div>
           </div>
-
+          {/* Quantity */}
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-1">
+              Quantity
+            </label>
+            <input
+              type="number"
+              name="qte"
+              required
+              placeholder="0"
+              className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
+              onChange={handleInputChange}
+            />
+          </div>
           {/* Price */}
           <div>
             <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Price (USD) *
+              Price (MGA) *
             </label>
             <input
               type="number"
@@ -182,14 +239,15 @@ export default function AddArticle() {
                 className="text-gray-400 group-hover:text-[rgb(32,202,202)]"
               />
               <span className="text-xs text-gray-500 mt-2">
-                Click to upload multiple images
+                Click to upload multiple images(jpeg,png,jpg)/videos(mp4)
               </span>
               <input
+                name="file"
                 type="file"
                 multiple
                 className="hidden"
                 onChange={handleImageChange}
-                accept="image/*"
+                accept="image/png,image/jpg,image/jpeg,video/mp4"
               />
             </label>
 
@@ -200,30 +258,53 @@ export default function AddArticle() {
                   key={index}
                   className="relative h-24 bg-gray-100 rounded-lg overflow-hidden border border-gray-200"
                 >
-                  <img
-                    src={URL.createObjectURL(file)}
-                    alt="preview"
-                    className="w-full h-full object-cover"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => removeImage(index)}
-                    className="absolute top-1 right-1 text-white bg-black/50 rounded-full hover:bg-red-500 transition-colors"
-                  >
-                    <IoMdCloseCircle size={20} />
-                  </button>
+                  {file.name.match(".jpeg") ||
+                  file.name.match(".png") ||
+                  file.name.match(".jpg") ? (
+                    <>
+                      <img
+                        src={URL.createObjectURL(file)}
+                        alt="preview"
+                        className="w-full h-full object-cover"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 text-white bg-black/50 rounded-full hover:bg-red-500 transition-colors"
+                      >
+                        <IoMdCloseCircle size={20} />
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <video className="w-full h-full object-cover" controls>
+                        <source
+                          src={URL.createObjectURL(file)}
+                          type="video/mp4"
+                        />
+                      </video>
+                      <p>ici</p>
+                      <button
+                        type="button"
+                        onClick={() => removeImage(index)}
+                        className="absolute top-1 right-1 text-white bg-black/50 rounded-full hover:bg-red-500 transition-colors"
+                      >
+                        <IoMdCloseCircle size={20} />
+                      </button>
+                    </>
+                  )}
                 </div>
               ))}
             </div>
           </div>
 
           {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full py-4 bg-[rgb(32,202,202)] text-white rounded-xl font-bold hover:bg-[rgb(28,180,180)] transition-all shadow-md active:scale-[0.98]"
-          >
-            Publish Listing
-          </button>
+          <Bouton 
+          type="submit" 
+          className="w-full py-4 bg-[rgb(32,202,202)] text-white rounded-xl font-bold hover:bg-[rgb(28,180,180)] transition-all shadow-md active:scale-[0.98] hover:cursor-pointer"
+          textBtn="Publish Listing"
+          textCours="Pending..."
+          />
         </form>
       </div>
     </LayoutsLambako>

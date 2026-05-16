@@ -1,0 +1,65 @@
+{
+    "message": "Article ajouté avec succès",
+    "article": {
+        "id_article": "Article00029",
+        "date_ajout_relative": "Publié à l'instant",
+        "fichiers": [
+            {
+                "id_fichier": "Fichier00007",
+                "fichier": "/media/fichiers_mp3/Shane_Filan_-_Beautiful_In_White_Official_Video_26b6oLD.mp3",
+                "type": "audio",
+                "taille": "4027.56",
+                "id_article": "Article00029"
+            },
+            {
+                "id_fichier": "Fichier00008",
+                "fichier": "/media/fichiers_mp4/Shane_Filan_-_Beautiful_In_White_Official_Video_MdPExHB.mp4",
+                "type": "video",
+                "taille": "4925.28",
+                "id_article": "Article00029"
+            },
+            {
+                "id_fichier": "Fichier00009",
+                "fichier": "/media/photos_articles/Capture_d%C3%A9cran_2026-04-16_185532_M3F1scO.png",
+                "type": "image",
+                "taille": "104.20",
+                "id_article": "Article00029"
+            }
+        ],
+        "nom": "Cahier",
+        "description": "Pour ecrire des notes",
+        "prix": "1200.00",
+        "note": 0.0,
+        "date_ajout": "2026-05-15T03:04:11.909849Z",
+        "taille": "xl",
+        "marque": "Gucci",
+        "category": "tshirt",
+        "quantite": 1,
+        "etat_article": "Disponnible",
+        "condition": "Neuf",
+        "id_vendeur": "Vendeur00001"
+    },
+    "fichiers": [
+        {
+            "id_fichier": "Fichier00007",
+            "fichier": "/media/fichiers_mp3/Shane_Filan_-_Beautiful_In_White_Official_Video_26b6oLD.mp3",
+            "type": "audio",
+            "taille": "4027.56",
+            "id_article": "Article00029"
+        },
+        {
+            "id_fichier": "Fichier00008",
+            "fichier": "/media/fichiers_mp4/Shane_Filan_-_Beautiful_In_White_Official_Video_MdPExHB.mp4",
+            "type": "video",
+            "taille": "4925.28",
+            "id_article": "Article00029"
+        },
+        {
+            "id_fichier": "Fichier00009",
+            "fichier": "/media/photos_articles/Capture_d%C3%A9cran_2026-04-16_185532_M3F1scO.png",
+            "type": "image",
+            "taille": "104.20",
+            "id_article": "Article00029"
+        }
+    ]
+}

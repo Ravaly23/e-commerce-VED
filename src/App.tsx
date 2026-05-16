@@ -5,11 +5,9 @@ import Accueil from "./Pages/Accueil";
 import Auth from "./Pages/Authentification";
 import Home from "./Pages/Home";
 import ProfilSeller from "./Pages/ProfilSeller";
-<<<<<<< HEAD
 import Testes from "./Pages/Testes";
-=======
-import api from "./services/api";
->>>>>>> affe777dd1f382180bd926d6ca08869dd3a08601
+import api from "@/services/api";
+
 
 const router = () => {
   return createBrowserRouter([
@@ -50,12 +48,10 @@ const router = () => {
     {
       path: "/profilxxxx",
       Component: ProfilSeller,
-<<<<<<< HEAD
     },{
       path: "/testes",
       Component: Testes
-=======
->>>>>>> affe777dd1f382180bd926d6ca08869dd3a08601
+
     }
   ]);
 };

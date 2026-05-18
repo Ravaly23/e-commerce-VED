@@ -29,7 +29,7 @@ function Dashboard() {
     },
 
     {
-      id: 2,
+      id: 3,
       products: "Conversekhgkgkgkkkkkkkkkkkkkkkkkkkkkyjyjyjyj",
       categorie: "Shoes",
       prices: 40,
@@ -38,7 +38,7 @@ function Dashboard() {
       condition: "very good",
     },
     {
-      id: 2,
+      id: 4,
       products: "Converse",
       categorie: "Shoes",
       prices: 40,
@@ -89,7 +89,7 @@ function Dashboard() {
           <BoiteListing typeB="Total Listing" valeurB="2" Sary={IoMdAdd} />
           <BoiteListing typeB="Total Listing" valeurB="2" Sary={IoMdAdd} />
         </div>
-        <div className="flex flex-col gap-y-10 pl-0 w-full md:w-11/12 md:ml-8 md:mr-8 md:flex-row md:justify-between md:mb-15">
+        <div className="border flex flex-col gap-y-10 pl-0 w-full md:w-11/12 md:ml-18 md:mr-10 md:flex-row md:justify-between md:mb-15">
           <Carte type="courbe" />
           <Carte type="barre" />
         </div>
@@ -108,7 +108,7 @@ function Dashboard() {
                 {donneeTab.map((item) => (
                   <tr
                     key={item.id}
-                    className=" border-b h-15 border-gray-400 md:h-20"
+                    className=" border-b h-15 border-gray-400 md:h-20 hover:bg-gray-50"
                   >
                     <td className="whitespace-nowrap p-2 md:p-6">
                       {item.products}

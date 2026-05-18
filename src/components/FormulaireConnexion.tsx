@@ -1,86 +1,135 @@
 import { useState } from "react";
 import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
-import api from "@/services/api";
+import { AlertCircleIcon } from "lucide-react";
 import Input from "./Input";
 import Button from "./Button";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "@/context/AuthContext";
+import { AlertColors } from "../components/Alert";
+
+//Validation email
+const validateEmail = (value: string): string | undefined => {
+  const t = value.trim();
+  if (!t) return "Email est requis.";
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t))
+    return "S\'il vous plaît, mettez une adresse email valid";
+};
+
+//Validation password
+const validatePassword = (value: string): string | undefined => {
+  if (!value) return "Un mot de passe est requis.";
+};
+
+type FormErrors = {
+  email?: string;
+  password?: string;
+};
 
 export default function FormulaireConnexion() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [errors, setErrors] = useState<FormErrors>({});
+  const [submitted, setSubmitted] = useState(false);
+  const { login, loading } = useAuth(); // utilisation AuthContext
   const navigate = useNavigate();
+
+  const validateAll = (): FormErrors => ({
+    email: validateEmail(email),
+    password: validatePassword(password),
+  });
+
+  const revalitedField = (field: keyof FormErrors) => {
+    if (!submitted) return;
+    setErrors((prev) => ({ ...prev, [field]: validateAll()[field] }));
+  };
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
+    setSubmitted(true);
+    const newErrors = validateAll();
+    if (Object.values(newErrors).some(Boolean)) {
+      setErrors(newErrors);
+      return;
+    }
     const body = {
       email: email,
       password: password,
     };
 
-    try {
-      const { data, status } = await api.post("auth/connexion/", body);
+    const result = await login(body);
 
-      setError("");
-      if (status === 200) {
-        if (data.role === "client") {
-          navigate("/profilxxxx/home");
-        } else if (data.role === "vendeur") {
-          navigate("/profilxxxx/dashboard");
-        }
+    if (result.success) {
+      const role = result?.data.role;
+      if (role === "client") {
+        navigate("/profilxxxx/home");
+      } else if (role === "vendeur") {
+        navigate("/profilxxxx/dashboard");
       }
-    } catch (error: any) {
-      //   console.log("STATUS :", error.response?.status);
-      //   console.log("DATA :", error.response?.data);
-      //   console.log("MESSAGE :", error.message);
-      if (error.response?.status === 400) {
-        setError("Email ou mot de passe incorrect");
-      } else if (error.response?.status === 403) {
-        //vendeur en attente
-        setError("Votre compte est en attente de validation");
-      }
+    } else {
+      setError(result.message);
     }
   };
 
   return (
     <div className="sm:px-10 xl:px-20 overflow-hidden">
-      <p className="mb-9 text-center text-white text-4xl font-serif">Login</p>
-      {error && <p className="text-center text-red-500 mb-5">{error}</p>}
+      <p className="mb-1.5 text-center text-white text-4xl font-serif">Se connecter</p>
+      {error && <AlertColors icon={<AlertCircleIcon />} title={error} />}
       <form onSubmit={handleLogin}>
         <p className="pl-2.5 font-bold mb-2.5 text-white"> E-mail </p>
-        <Input
-          type="email"
-          name="email"
-          value={email}
-          placeholder="Enter your email"
-          onChange={(e) => setEmail(e.target.value)}
-          iconLeft={<FaEnvelope />}
-          marginBottom="36px"
-        />
-        <p className="pl-2.5 font-bold mb-2.5 text-white">Password</p>
-        <Input
-          type={showPassword ? "text" : "password"}
-          name="password"
-          placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          onClick={() => setShowPassword(!showPassword)}
-          iconLeft={<FaLock />}
-          // iconValid={<FaExclamationTriangle/>}
-          iconRight={showPassword ? <FaEyeSlash /> : <FaEye />}
-          marginBottom="36px"
-        />
+        <div className="flex flex-col gap-1 mb-9">
+          <Input
+            type="email"
+            value={email}
+            placeholder="Entrez votre email"
+            error={errors.email ? true : false}
+            onKeyUp={() => {
+              revalitedField("email");
+              setError("");
+            }}
+            onChange={(e) => setEmail(e.target.value)}
+            iconLeft={<FaEnvelope />}
+          />
+          {errors.email && (
+            <p className="text-red-400 text-xs pl-1">{errors.email}</p>
+          )}
+        </div>
+        <p className="pl-2.5 font-bold mb-2.5 text-white">Mot de passe</p>
+        <div className="flex flex-col gap-1 mb-9">
+          <Input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            placeholder="Entrez votre mot de passe"
+            error={errors.password ? true : false}
+            onKeyUp={() => {
+              revalitedField("password");
+              setError("");
+            }}
+            onChange={(e) => setPassword(e.target.value)}
+            onClick={() => setShowPassword(!showPassword)}
+            iconLeft={<FaLock />}
+            iconRight={showPassword ? <FaEyeSlash /> : <FaEye />}
+          />
+          {errors.password && (
+            <p className="text-red-400 text-xs pl-1">{errors.password}</p>
+          )}
+        </div>
         <div className="flex justify-between text-sm md:text-lg lg:text-10">
           <div className="text-[#FFFFFF]">
-            <input type="checkbox" name="" id="" /> Remember me
+            <input type="checkbox" name="" id="" /> Souviens-toi de moi
           </div>
           <p className="text-[#1C89B6] font-medium">
-            <a href="http://">Forgot password?</a>
+            <a href="http://">Mot de passe oublié?</a>
           </p>
         </div>
-        <Button text="Login" background="[#3C4382]" textColor="[#FFFFFF]" />
+        <Button
+          text={loading ? "Login..." : "Login"}
+          background="[#3C4382]"
+          textColor="[#FFFFFF]"
+          disable={loading ? true : false}
+        />
       </form>
     </div>
   );

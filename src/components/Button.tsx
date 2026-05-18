@@ -3,13 +3,17 @@ interface ButtonProps {
   background?: string;
   textColor?: string;
   height?: string;
+  disable? : boolean
+  onclick? : () => void
 }
 
-export default function Button({ text, background }: ButtonProps) {
+export default function Button({ text, background,disable = false , onclick}: ButtonProps) {
   return (
     <button
-      className={`bg-${background} mt-[36px] w-full mb-[36px] text-[#FFFFFF] h-[40px] text-xl rounded-[15px] cursor-pointer`}
+      className={`bg-${background} mt-9 w-full mb-9 text-[#FFFFFF] h-10 text-xl rounded-[15px] cursor-pointer`}
       type="submit"
+      disabled={disable}
+      onClick={onclick}
     >
       {text}
     </button>

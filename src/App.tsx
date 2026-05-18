@@ -5,7 +5,11 @@ import Accueil from "./Pages/Accueil";
 import Auth from "./Pages/Authentification";
 import Home from "./Pages/Home";
 import ProfilSeller from "./Pages/ProfilSeller";
+import RegistrationCompletion from "./Pages/RegistrationCompletion";
+import MotDePasseOublier from "./Pages/MotDePasseOublier";
+import AccountTypeSelection from "./Pages/AccoutTypeSelection";
 import api from "./services/api";
+import { protectedLoader } from "./utils/auth";
 
 const router = () => {
   return createBrowserRouter([
@@ -18,7 +22,12 @@ const router = () => {
       Component: AddArticle,
     },
     {
+      path: "/motDePasseOublier/:emailId",
+      Component: MotDePasseOublier,
+    },
+    {
       path: "/profilxxxx/dashboard",
+      loader: protectedLoader,
       Component: Dashboard,
     },
     {
@@ -33,20 +42,28 @@ const router = () => {
         };
 
         try {
-          const {data} = await api.post('auth/connexion/',body)
-          console.log("teste avec loaders : "+data)
-        } catch (error) {       
-        }
+          const { data } = await api.post("auth/connexion/", body);
+          console.log("teste avec loaders : " + data);
+        } catch (error) {}
       },
     },
     {
       path: "/profilxxxx/home",
+      loader: protectedLoader,
       Component: Home,
     },
     {
       path: "/profilxxxx",
       Component: ProfilSeller,
-    }
+    },
+    {
+      path: "/account-type",
+      Component: AccountTypeSelection,
+    },
+    {
+      path: "/finalization",
+      Component: RegistrationCompletion,
+    },
   ]);
 };
 

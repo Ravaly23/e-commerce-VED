@@ -6,6 +6,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { toast } from "sonner";
 
 //la structure de l'utilisateur
 interface User {
@@ -57,33 +58,45 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   // La fonction login
+  async function login(dataUser: DataUser) {
+    setLoading(true);
 
-  async function login(
-    dataUser: DataUser,
-  ): Promise<{ success: boolean; message: string; data?: any }> {
     try {
-      setLoading(true);
-      const { data, status } = await api.post("auth/connexion/", dataUser);
+      // response contiendra la réponse HTTP AxiosResponse en cas de succès
+      const response = await (
+        await toast
+          .promise(api.post("auth/connexion/", dataUser), {
+            position: "top-center",
+            loading: "Connexion...",
+            success: (response) => {
+              const { data } = response;
 
-      if (status !== 200) throw new Error(data.message);
+              // Stockage des données d'authentification
+              localStorage.setItem("token", data.tokens.access);
+              localStorage.setItem("user", JSON.stringify(data.utilisateur));
+              setUser(data.utilisateur);
 
-      localStorage.setItem("token", data.tokens.access);
-      localStorage.setItem("user", JSON.stringify(data.utilisateur));
-      setUser(data.utilisateur);
-      setLoading(false);
+              // Le texte retourné ici sera affiché par le toast de succès
+              return data.message || "Connexion réussie !";
+            },
+            error: (error: any) => {
+              // Le texte retourné ici sera affiché par le toast d'erreur
+              if (error.response?.status === 400) {
+                return "Email ou mot de passe incorrect";
+              }
+              return (
+                error.response?.data?.message || "Erreur lors de la connexion"
+              );
+            },
+          })
+          .unwrap()
+      ).data;
 
-      return { success: true, message: "Connexion réussie", data: data };
-    } catch (error: any) {
-      console.log("status d'erreur : " + error.response?.status);
-      let message;
-      if (error.response?.status === 400) {
-        message = "Email ou mot de passe incorrect";
-      } else {
-        message =
-          error.response?.data?.message || "Erreur lors de la connexion";
-      }
-
-      return { success: false, message };
+      return { success: true, message: "Connexion réussie", data: response };
+    } catch (error) {
+      // toast.promise propage l'erreur si l'API échoue,
+      // console.error("Échec de la connexion dans le composant :", error);
+      return { success: false, message: "Erreur" };
     } finally {
       setLoading(false);
     }
@@ -92,12 +105,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
   //logique logout
   function logout() {
     localStorage.removeItem("token"); // supprimer le token stocker dans localStorage après la déconnexion d'un utilisateur
-    localStorage.removeItem("user"); // supprimer l'information de l'utilisateur connecter 
+    localStorage.removeItem("user"); // supprimer l'information de l'utilisateur connecter
     setUser(null); //supprimer aussi ses données
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
+    <AuthContext.Provider value={{ user, loading, login, logout}}>
       {children}
     </AuthContext.Provider>
   );

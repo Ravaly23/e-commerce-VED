@@ -88,6 +88,7 @@ export default function RegistrationCompletion() {
   const [firstName, setFirstName] = useState("");
   const [address, setAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [loading, setLoading] = useState(false);
   const [sexCategory, setSexCategory] = useState<Sexe | null>(null);
   const [error, setError] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -126,8 +127,6 @@ export default function RegistrationCompletion() {
       password: password,
     };
 
-    console.log(accountType);
-
     let route: string;
     if (accountType === "VENDEUR") {
       route = "auth/inscription_vendeur/";
@@ -137,7 +136,7 @@ export default function RegistrationCompletion() {
       return;
     }
 
-    console.log("route : " + route!);
+    setLoading(true);
 
     toast.promise(api.post(route!, dataUsers), {
       position: "top-center",
@@ -149,15 +148,19 @@ export default function RegistrationCompletion() {
           throw new Error(data.message);
         }
 
-        console.log("success");
-        console.log(data);
+        if (status === 201) setLoading(false);
 
         navigate("/");
         return data.message;
       },
       error: (error: any) => {
+        setLoading(false);
         if (error.response?.status === 400) {
-          return error.response?.data.errors.username[0];
+          if (error.response?.data.errors.username) {
+            return error.response?.data.errors.username[0];
+          } else if (error.response?.data.errors.email) {
+            return error.response?.data.errors.email[0];
+          }
         }
 
         return error.response?.data?.message || "Une erreur est survenue";
@@ -280,44 +283,6 @@ export default function RegistrationCompletion() {
                 <p className="text-red-400 text-xs pl-1">{error.sex}</p>
               )}
             </div>
-            {/* <div className="flex flex-col gap-1">
-              <Combobox
-                value={sexCategory?.label ?? ""}
-                onValueChange={(newValue) => {
-                  const found = sexe.find((s) => s.label === newValue) ?? null;
-                  setSexCategory(found);
-                  if (submitted)
-                    setError((prev) => ({
-                      ...prev,
-                      sexe: validateSexe(found),
-                    }));
-                }}
-              >
-                <ComboboxInput
-                  placeholder="Sélectionnez votre catégorie de sexe"
-                  showClear={sexCategory ? true : false}
-                  className={`h-10 rounded-xl border bg-white text-black placeholder:text-zinc-400 focus:ring-purple-500
-                    ${error.sex ? "ring-2 ring-red-500" : "border-zinc-700 focus:border-purple-500"}`}
-                />
-                <ComboboxContent className="mt-2 rounded-xl border border-zinc-700 bg-white shadow-2xl">
-                  <ComboboxList className="max-h-62.5 overflow-y-auto">
-                    {sexe.map((item) => (
-                      <ComboboxItem
-                        key={item.value}
-                        value={item.label}
-                        className="cursor-pointer rounded-lg text-black hover:bg-purple-500 hover:text-white data-[selected=true]:bg-purple-600 data-[selected=true]:text-white"
-                      >
-                        {item.icone}
-                        {item.label}
-                      </ComboboxItem>
-                    ))}
-                  </ComboboxList>
-                </ComboboxContent>
-              </Combobox>
-              {error.sex && (
-                <p className="text-red-400 text-xs pl-1">{error.sex}</p>
-              )}
-            </div> */}
           </div>
 
           <div className="flex flex-col gap-1">
@@ -338,148 +303,14 @@ export default function RegistrationCompletion() {
               <p className="text-red-400 text-xs pl-1">{error.address}</p>
             )}
           </div>
-          <Button text="Confirm" background="[#3C4382]" textColor="[#FFFFFF]" />
+          <Button
+            text="Confirmer"
+            background="[#3C4382]"
+            textColor="[#FFFFFF]"
+            disable={loading ? true : false}
+          />
         </form>
       </div>
     </div>
   );
-}
-
-//import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-{
-  /* <Tabs
-          defaultValue="client"
-        >
-          <TabsList variant="line" className="w-full ">
-            <TabsTrigger value="client" className="text-white data-[state=active]:text-blue-500 ">
-              Inscription en tant que client
-            </TabsTrigger>
-            <TabsTrigger value="vendeur" className="text-white data-[state=active]:text-blue-500">
-              Inscription en tant que vendeur
-            </TabsTrigger>
-          </TabsList>
-          <TabsContent value="client" className="mt-3">
-            <form onSubmit={handleFinalizaton}>
-              <div className="grid grid-cols-2 gap-2  mb-9">
-                <div className="flex flex-col gap-1">
-                  <Input
-                    type="text"
-                    placeholder="Entrez votre nom de famille"
-                    value={lastName}
-                    onChange={(e) => {
-                      setLastName(e.target.value);
-                      revalitedField("lastName");
-                    }}
-                    iconLeft={<IoPersonSharp />}
-                    error={error.lastName ? true : false}
-                  />
-                  {error.lastName && (
-                    <p className="text-red-400 text-xs pl-1">
-                      {error.lastName}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Input
-                    type="text"
-                    placeholder="Entrez votre prénom"
-                    value={firstName}
-                    onChange={(e) => {
-                      setFirstName(e.target.value);
-                      revalitedField("firstName");
-                    }}
-                    iconLeft={<IoPersonSharp />}
-                    error={error.firstName ? true : false}
-                  />
-                  {error.firstName && (
-                    <p className="text-red-400 text-xs pl-1">
-                      {error.firstName}
-                    </p>
-                  )}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-2  mb-9">
-                <div className="flex flex-col gap-1">
-                  <Input
-                    type="text"
-                    placeholder="Entrez votre numéro de téléphone"
-                    value={phoneNumber}
-                    onChange={(e) => {
-                      setPhoneNumber(e.target.value);
-                      revalitedField("phoneNumber");
-                    }}
-                    iconLeft={<IoPhonePortrait />}
-                    error={error.phoneNumber ? true : false}
-                  />
-                  {error.phoneNumber && (
-                    <p className="text-red-400 text-xs pl-1">
-                      {error.phoneNumber}
-                    </p>
-                  )}
-                </div>
-                <div className="flex flex-col gap-1">
-                  <Combobox
-                    value={sexCategory?.label ?? ""}
-                    onValueChange={(newValue) => {
-                      const found =
-                        sexe.find((s) => s.label === newValue) ?? null;
-                      setSexCategory(found);
-                      if (submitted)
-                        setError((prev) => ({
-                          ...prev,
-                          sexe: validateSexe(found),
-                        }));
-                    }}
-                  >
-                    <ComboboxInput
-                      placeholder="Sélectionnez votre catégorie de sexe"
-                      showClear={sexCategory ? true : false}
-                      className={`h-10 rounded-xl border bg-white text-black placeholder:text-zinc-400 focus:ring-purple-500
-                    ${error.sex ? "ring-2 ring-red-500" : "border-zinc-700 focus:border-purple-500"}`}
-                    />
-                    <ComboboxContent className="mt-2 rounded-xl border border-zinc-700 bg-white shadow-2xl">
-                      <ComboboxList className="max-h-62.5 overflow-y-auto">
-                        {sexe.map((item) => (
-                          <ComboboxItem
-                            key={item.value}
-                            value={item.label}
-                            className="cursor-pointer rounded-lg text-black hover:bg-purple-500 hover:text-white data-[selected=true]:bg-purple-600 data-[selected=true]:text-white"
-                          >
-                            {item.icone}
-                            {item.label}
-                          </ComboboxItem>
-                        ))}
-                      </ComboboxList>
-                    </ComboboxContent>
-                  </Combobox>
-                  {error.sex && (
-                    <p className="text-red-400 text-xs pl-1">{error.sex}</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="flex flex-col gap-1">
-                <Input
-                  type="text"
-                  placeholder="Entrez votre adresse"
-                  value={address}
-                  onChange={(e) => {
-                    setAddress(e.target.value);
-                    revalitedField("address");
-                  }}
-                  iconLeft={<FaLocationDot />}
-                  error={error.address ? true : false}
-                />
-                {error.address && (
-                  <p className="text-red-400 text-xs pl-1">{error.address}</p>
-                )}
-              </div>
-              <Button
-                text="Confirm"
-                background="[#3C4382]"
-                textColor="[#FFFFFF]"
-              />
-            </form>
-          </TabsContent>
-        </Tabs> */
 }

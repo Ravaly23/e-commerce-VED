@@ -1,18 +1,16 @@
 import { useState } from "react";
 import { FaEnvelope, FaEye, FaEyeSlash, FaLock } from "react-icons/fa";
-import { AlertCircleIcon } from "lucide-react";
 import Input from "./Input";
 import Button from "./Button";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
-import { AlertColors } from "../components/Alert";
 
 //Validation email
 const validateEmail = (value: string): string | undefined => {
   const t = value.trim();
   if (!t) return "Email est requis.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t))
-    return "S\'il vous plaît, mettez une adresse email valid";
+    return "S\'il vous plaît, mettez une adresse email valide";
 };
 
 //Validation password
@@ -28,7 +26,6 @@ type FormErrors = {
 export default function FormulaireConnexion() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState<FormErrors>({});
   const [submitted, setSubmitted] = useState(false);
@@ -69,14 +66,14 @@ export default function FormulaireConnexion() {
         navigate("/profilxxxx/dashboard");
       }
     } else {
-      setError(result.message);
     }
   };
 
   return (
     <div className="sm:px-10 xl:px-20 overflow-hidden">
-      <p className="mb-1.5 text-center text-white text-4xl font-serif">Se connecter</p>
-      {error && <AlertColors icon={<AlertCircleIcon />} title={error} />}
+      <p className="mb-1.5 text-center text-white text-4xl font-serif">
+        Se connecter
+      </p>
       <form onSubmit={handleLogin}>
         <p className="pl-2.5 font-bold mb-2.5 text-white"> E-mail </p>
         <div className="flex flex-col gap-1 mb-9">
@@ -87,7 +84,6 @@ export default function FormulaireConnexion() {
             error={errors.email ? true : false}
             onKeyUp={() => {
               revalitedField("email");
-              setError("");
             }}
             onChange={(e) => setEmail(e.target.value)}
             iconLeft={<FaEnvelope />}
@@ -105,7 +101,6 @@ export default function FormulaireConnexion() {
             error={errors.password ? true : false}
             onKeyUp={() => {
               revalitedField("password");
-              setError("");
             }}
             onChange={(e) => setPassword(e.target.value)}
             onClick={() => setShowPassword(!showPassword)}
@@ -121,11 +116,11 @@ export default function FormulaireConnexion() {
             <input type="checkbox" name="" id="" /> Souviens-toi de moi
           </div>
           <p className="text-[#1C89B6] font-medium">
-            <a href="http://">Mot de passe oublié?</a>
+            <Link to="/password-reset">Mot de passe oublié?</Link>
           </p>
         </div>
         <Button
-          text={loading ? "Login..." : "Login"}
+          text="Se connecter"
           background="[#3C4382]"
           textColor="[#FFFFFF]"
           disable={loading ? true : false}

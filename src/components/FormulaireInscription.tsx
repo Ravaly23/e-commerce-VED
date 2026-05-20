@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Input from "./Input";
 import Button from "./Button";
-import { AlertColors } from "../components/Alert";
 import {
   FaCheckCircle,
   FaEnvelope,
@@ -11,25 +10,26 @@ import {
   FaEyeSlash,
   FaLock,
 } from "react-icons/fa";
-import { AlertCircleIcon } from "lucide-react";
 
 //Validation email
 const validateEmail = (value: string): string | undefined => {
   const t = value.trim();
   if (!t) return "Email est requis.";
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(t))
-    return "S\'il vous plaît, mettez une adresse email valid";
+    return "S\'il vous plaît, mettez une adresse email valide";
 };
 
 //Validation password
 const validatePassword = (value: string): string | undefined => {
   if (!value) return "Un mot de passe est requis.";
-  if (value.length < 8) return "Le mot de passe doit comporter au moins 8 caractères.";
+  if (value.length < 8)
+    return "Le mot de passe doit comporter au moins 8 caractères.";
   if (!/[A-Z]/.test(value))
     return "Le mot de passe doit contenir au moins une lettre majuscule.";
   if (!/[a-z]/.test(value))
     return "Le mot de passe doit contenir au moins une lettre minuscule.";
-  if (!/[0-9]/.test(value)) return "Le mot de passe doit contenir au moins un chiffre";
+  if (!/[0-9]/.test(value))
+    return "Le mot de passe doit contenir au moins un chiffre";
   if (!/[^A-Za-z0-9]/.test(value))
     return "Le mot de passe doit contenir au moins un caractère spécial.";
 };
@@ -63,7 +63,6 @@ export default function FormulaireInscription() {
     <FaExclamationTriangle />,
   );
   const [passwordVerify, setPasswordVerify] = useState(false);
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleConfirmPassword = () => {
@@ -93,21 +92,18 @@ export default function FormulaireInscription() {
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
-    const newErrors = validateAll();
+    const newErrors = validateAll(); //vérification de tous les inputs 
+
     if (Object.values(newErrors).some(Boolean)) {
       setErrors(newErrors);
       return;
     }
-    if (password === confirmPassword && password) {
-      const data = {
-        email: email,
-        password: password,
-      };
-      navigate("/account-type", { state: data });
-      setError("");
-    } else {
-      setError("Les deux mot de passe ne correspodant pas");
-    }
+
+    const data = {
+      email: email,
+      password: password,
+    };
+    navigate("/account-type", { state: data });
   };
 
   return (
@@ -115,7 +111,6 @@ export default function FormulaireInscription() {
       <p className="mb-1.5 text-center text-white text-4xl font-serif">
         S'inscrire
       </p>
-      {error && <AlertColors icon={<AlertCircleIcon />} title={error} />}
       <form onSubmit={handleSignUp}>
         <p className="pl-2.5 font-bold mb-2.5 text-white"> E-mail </p>
         <div className="flex flex-col gap-1 mb-9">
@@ -172,7 +167,11 @@ export default function FormulaireInscription() {
             </p>
           )}
         </div>
-        <Button text="S'inscrire" background="[#3C4382]" textColor="[#FFFFFF]" />
+        <Button
+          text="S'inscrire"
+          background="[#3C4382]"
+          textColor="[#FFFFFF]"
+        />
       </form>
     </div>
   );

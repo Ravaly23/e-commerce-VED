@@ -8,7 +8,7 @@ import ProfilSeller from "./Pages/ProfilSeller";
 import RegistrationCompletion from "./Pages/RegistrationCompletion";
 import MotDePasseOublier from "./Pages/MotDePasseOublier";
 import AccountTypeSelection from "./Pages/AccoutTypeSelection";
-import api from "./services/api";
+import DemandeReinitialisationMdp from "./Pages/DemandeReinitialisationMdp";
 import { protectedLoader } from "./utils/auth";
 
 const router = () => {
@@ -22,7 +22,7 @@ const router = () => {
       Component: AddArticle,
     },
     {
-      path: "/motDePasseOublier/:emailId",
+      path: "/forget-password/:token/",
       Component: MotDePasseOublier,
     },
     {
@@ -33,19 +33,6 @@ const router = () => {
     {
       path: "/auth",
       Component: Auth,
-      action: async ({ request }) => {
-        const formData = await request.formData();
-
-        const body = {
-          email: formData.get("email"),
-          password: formData.get("password"),
-        };
-
-        try {
-          const { data } = await api.post("auth/connexion/", body);
-          console.log("teste avec loaders : " + data);
-        } catch (error) {}
-      },
     },
     {
       path: "/profilxxxx/home",
@@ -63,6 +50,10 @@ const router = () => {
     {
       path: "/finalization",
       Component: RegistrationCompletion,
+    },
+    {
+      path: "/password-reset",
+      Component: DemandeReinitialisationMdp,
     },
   ]);
 };

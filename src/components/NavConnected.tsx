@@ -20,7 +20,7 @@ export default function NavConnected() {
         <div className="hidden md:inline-flex">
            <Input 
            type="text" 
-           placeholder="Search Items"
+           placeholder="Rechercher des articles"
            value={valueSearch}
            iconRight={<FaSearch />}
            onChange={(e) => setValueSearch(e.target.value)}

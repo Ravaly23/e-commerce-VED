@@ -1,4 +1,4 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { IoMdCloudUpload, IoMdCloseCircle } from "react-icons/io";
 import LayoutsLambako from "../layouts/LayoutsLambako";
 import api from "@/services/api";
@@ -10,9 +10,9 @@ interface ProductData {
   brand: string;
   size: string;
   condition: string;
-  price: string;
+  price: number;
   description: string;
-  qte: number
+  qte: number;
 }
 
 export default function AddArticle() {
@@ -23,10 +23,93 @@ export default function AddArticle() {
     brand: "",
     size: "",
     condition: "",
-    price: "",
+    price: 0.0,
     description: "",
     qte: 0,
   });
+  const [nomV, setNomV] = useState(true);
+  const [categoryV, setCategorieV] = useState(true);
+  const [marqueV, setMarqueV] = useState(true);
+  const [tailleV, setTailleV] = useState(true);
+  const [conditionV, setConditionV] = useState(true);
+  const [qteV, setQteV] = useState(true);
+  const [prixV, setPrixV] = useState(true);
+  const [descV, setDescV] = useState(true);
+  const [imagesV,setImagesV] = useState(true);
+
+  //champ obligatoire *
+  useEffect(() => {
+    if (formData.title !== "") {
+      setNomV(false);
+    } else {
+      setNomV(true);
+    }
+  }, [formData.title]);
+
+  useEffect(() => {
+    if (formData.category !== "") {
+      console.log("selectionner");
+      setCategorieV(false);
+    } else if (formData.category === "") {
+      setCategorieV(true);
+    }
+  }, [formData.category]);
+
+  useEffect(() => {
+    if (formData.brand !== "") {
+      console.log("selectionner");
+      setMarqueV(false);
+    } else if (formData.brand === "") {
+      setMarqueV(true);
+    }
+  }, [formData.brand]);
+
+  useEffect(() => {
+    if (formData.size !== "") {
+      setTailleV(false);
+    } else if (formData.size === "") {
+      setTailleV(true);
+    }
+  }, [formData.size]);
+  useEffect(() => {
+    if (formData.condition !== "") {
+      setConditionV(false);
+    } else if (formData.size === "") {
+      setConditionV(true);
+    }
+  }, [formData.condition]);
+
+  useEffect(() => {
+    if (formData.qte > 0) {
+      setQteV(false);
+    } else if (formData.qte <= 0) {
+      setQteV(true);
+    }
+  }, [formData.qte]);
+
+  useEffect(() => {
+    if (formData.price > 0) {
+      setPrixV(false);
+    } else if (formData.price <= 0) {
+      setPrixV(true);
+    }
+  }, [formData.price]);
+
+  useEffect(() => {
+    if (formData.description !== "") {
+      setDescV(false);
+    } else if (formData.description === "") {
+      setDescV(true);
+    }
+  }, [formData.description]);
+
+  useEffect(()=>{
+    if(images.length > 0){
+      setImagesV(false);
+    }else if(images.length ===0){
+      setImagesV(true);
+    }
+  },[images])
 
   // Handle Text Inputs
   const handleInputChange = (
@@ -51,30 +134,37 @@ export default function AddArticle() {
 
   const handleSubmit = async () => {
     const data = new FormData();
-    data.append("nom",formData.title);
-    data.append("category",formData.category);
-    data.append("quantite",formData.qte.toString());
-    data.append("taille",formData.size);
-    data.append("marque",formData.brand);
-    data.append("condition",formData.condition);
-    data.append("id_vendeur","Vendeur00001");
-    data.append("description",formData.description);
-    data.append("prix",formData.price);
+    data.append("nom", formData.title);
+    data.append("category", formData.category);
+    data.append("quantite", formData.qte.toString());
+    data.append("taille", formData.size);
+    data.append("marque", formData.brand);
+    data.append("condition", formData.condition);
+    data.append("id_vendeur", "Vendeur00001");
+    data.append("description", formData.description);
+    data.append("prix", formData.price.toString());
 
-    images.forEach((file)=>{
-      data.append("fichiers",file);
-    });
-    try {
-      const post = await api.postForm("article/ajout_article/", data,
-      {
-        headers: {
-           'Content-Type': 'multipart/form-data',
-        },
+    if (images.length > 0) {
+      images.forEach((file) => {
+        data.append("fichiers", file);
       });
-      console.log(post.data);
-      // console.log(images);
-    } catch (error) {
-      console.error(error);
+      try {
+        const post = await api.postForm("article/ajout_article/", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (post.status !== 201) {
+          throw new Error("Article non-ajouté");
+        }
+        console.log(post.data);
+      } catch (error: any) {
+        //les status autres que 200  sont géré ici
+        const erreur = error.response.data;
+        console.log(erreur.message);
+      }
+    }else{
+      console.log("Ajouter au moins une image ou video");
     }
   };
 
@@ -82,22 +172,21 @@ export default function AddArticle() {
     <LayoutsLambako page="adminSeller">
       <div className="max-w-4xl mx-auto my-10 p-6 bg-white rounded-xl shadow-sm border border-gray-100 mt-10">
         <h2 className="text-2xl font-serif font-semibold mb-6 text-gray-800">
-          Item Details
+          Détails de l'article
         </h2>
 
         {/* <form onSubmit={handleSubmit} className="space-y-6"> */}
         <form action={handleSubmit} className="space-y-6">
-          
           {/* Title */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Title *
+            <label className="flex text-sm font-semibold text-gray-700 mb-1">
+              Nom {nomV ? <p className="text-red-600 ml-2">*</p> : ""}
             </label>
             <input
               type="text"
               name="title"
               required
-              placeholder="e.g., Vintage Denim Jacket"
+              placeholder="ex, Vintage Denim Jacket"
               className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
               onChange={handleInputChange}
             />
@@ -106,8 +195,9 @@ export default function AddArticle() {
           {/* Category & Brand */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Category *
+              <label className="flex text-sm font-semibold text-gray-700 mb-1">
+                Categorie{" "}
+                {categoryV ? <p className="text-red-600 ml-2">*</p> : ""}
               </label>
               <select
                 name="category"
@@ -115,29 +205,28 @@ export default function AddArticle() {
                 className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
                 onChange={handleInputChange}
               >
-                <option value="">Select category</option>
-                <option value="Dress">Dress</option>
-                <option value="T-Shirt">T-Shirt</option>
-                <option value="HandBag">HandBag</option>
-                <option value="Socks">Socks</option>
-                <option value="Jacket">Jacket</option>
-                <option value="Scarf">Scarf</option>
-                <option value="Gloves">Gloves</option>
-                <option value="Koat">Koat</option>
-                <option value="Cap">Cap</option>
-                <option value="Blouse">Blouse</option>
-                <option value="Pants">Pants</option>
+                <option value="">Selectionner catégorie</option>
+                <option value="pantalon">pantalon</option>
+                <option value="short">short</option>
+                <option value="tshirt">tshirt</option>
+                <option value="débardeur">débardeur</option>
+                <option value="chemise">chemise</option>
+                <option value="robe">robe</option>
+                <option value="jupe">jupe</option>
+                <option value="sweat">sweat</option>
+                <option value="ensemble">ensemble</option>
+                <option value="maillot">maillot</option>
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Brand *
+              <label className="flex text-sm font-semibold text-gray-700 mb-1">
+                Marque {marqueV ? <p className="text-red-600 ml-2">*</p> : ""}
               </label>
               <input
                 type="text"
                 name="brand"
                 required
-                placeholder="e.g., Levi's"
+                placeholder="ex, Levi's"
                 className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
                 onChange={handleInputChange}
               />
@@ -147,8 +236,8 @@ export default function AddArticle() {
           {/* Size & Condition */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Size *
+              <label className="flex text-sm font-semibold text-gray-700 mb-1">
+                Taille {tailleV ? <p className="text-red-600 ml-2">*</p> : ""}
               </label>
               <select
                 name="size"
@@ -156,7 +245,7 @@ export default function AddArticle() {
                 className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
                 onChange={handleInputChange}
               >
-                <option value="">Select size</option>
+                <option value="">Selectionner la taille</option>
                 <option value="XS">XS</option>
                 <option value="S">S</option>
                 <option value="M">M</option>
@@ -169,8 +258,9 @@ export default function AddArticle() {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">
-                Condition *
+              <label className="flex text-sm font-semibold text-gray-700 mb-1">
+                Condition{" "}
+                {conditionV ? <p className="text-red-600 ml-2">*</p> : ""}
               </label>
               <select
                 name="condition"
@@ -178,17 +268,16 @@ export default function AddArticle() {
                 className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
                 onChange={handleInputChange}
               >
-                <option value="">Select condition</option>
-                <option value="new">New with tags</option>
-                <option value="good">Very good</option>
-                <option value="fair">Satisfactory</option>
+                <option value="">Condition de l'article</option>
+                <option value="Neuf">Neuf</option>
+                <option value="Occasion">Occasion</option>
               </select>
             </div>
           </div>
           {/* Quantity */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Quantity
+            <label className="flex text-sm font-semibold text-gray-700 mb-1">
+              Quantité {qteV ? <p className="text-red-600 ml-2">*</p> : ""}
             </label>
             <input
               type="number"
@@ -201,13 +290,12 @@ export default function AddArticle() {
           </div>
           {/* Price */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Price (MGA) *
+            <label className="flex text-sm font-semibold text-gray-700 mb-1">
+              Prix (MGA) {prixV ? <p className="text-red-600 ml-2">*</p> : ""}
             </label>
             <input
               type="number"
               name="price"
-              required
               placeholder="0.00"
               className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
               onChange={handleInputChange}
@@ -216,13 +304,13 @@ export default function AddArticle() {
 
           {/* Description */}
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Description *
+            <label className="flex text-sm font-semibold text-gray-700 mb-1">
+              Description {descV ? <p className="text-red-600 ml-2">*</p> : ""}
             </label>
             <textarea
               name="description"
               required
-              placeholder="Describe your item, its condition, and any details buyers should know..."
+              placeholder="Veuillez faire la description de votre article"
               className="w-full h-32 p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)] resize-none"
               onChange={handleInputChange}
             ></textarea>
@@ -230,8 +318,8 @@ export default function AddArticle() {
 
           {/* Multi-Image Upload Section */}
           <div className="pt-4">
-            <label className="block text-sm font-semibold text-gray-700 mb-2 font-serif">
-              Product Photos
+            <label className="flex text-sm font-semibold text-gray-700 mb-2 font-serif">
+              Photos ou Videos de l'article {imagesV ? <p className="text-red-600 ml-2">*</p> : ""}
             </label>
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all group">
               <IoMdCloudUpload
@@ -239,7 +327,7 @@ export default function AddArticle() {
                 className="text-gray-400 group-hover:text-[rgb(32,202,202)]"
               />
               <span className="text-xs text-gray-500 mt-2">
-                Click to upload multiple images(jpeg,png,jpg)/videos(mp4)
+                Cliquer pour ajouter des images(jpeg,png,jpg)/videos(mp4)
               </span>
               <input
                 name="file"
@@ -299,11 +387,11 @@ export default function AddArticle() {
           </div>
 
           {/* Submit Button */}
-          <Bouton 
-          type="submit" 
-          className="w-full py-4 bg-[rgb(32,202,202)] text-white rounded-xl font-bold hover:bg-[rgb(28,180,180)] transition-all shadow-md active:scale-[0.98] hover:cursor-pointer"
-          textBtn="Publish Listing"
-          textCours="Pending..."
+          <Bouton
+            type="submit"
+            className="w-full py-4 bg-[rgb(32,202,202)] text-white rounded-xl font-bold hover:bg-[rgb(28,180,180)] transition-all shadow-md active:scale-[0.98] hover:cursor-pointer"
+            textBtn="Enregistrer l'article"
+            textCours="En cours ..."
           />
         </form>
       </div>

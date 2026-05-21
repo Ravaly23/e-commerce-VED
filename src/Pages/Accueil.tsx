@@ -14,7 +14,7 @@ function Accueil() {
                 <span className="text-white drop-shadow-sm">HEADPHONE</span>
               </h2>
               <button className="bg-red-500 text-white px-8 py-3 rounded-full font-bold mt-6">
-                Shop By Category
+                Achetez par catégorie
               </button>
             </div>
 

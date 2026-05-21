@@ -4,7 +4,7 @@ import Input from "./Input";
 import { useState } from "react";
 export default function NavAdmin() {
   const [valueSearch, setValueSearch] = useState("");
-
+  const [etat,setEtat] = useState("hidden");
   return (
     <>
       <nav className="flex items-center justify-between px-5 py-4 bg-white shadow-sm">
@@ -27,7 +27,10 @@ export default function NavAdmin() {
         </div> */}
         <div className="flex justify-center items-center  w-35 gap-x-2">
           <FaUser />
-          <p className="font-serif text-xl md:text-xl">Ravaly23</p>
+          <p className="font-serif text-xl md:text-xl hover:cursor-pointer " onClick={()=>{(etat === "hidden" ? "": "hidden")}}>Ravaly23</p>
+        </div>
+        <div className={`${etat} md:w-10 md:h-auto `}>
+
         </div>
       </nav>
     </>

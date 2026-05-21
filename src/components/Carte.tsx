@@ -28,7 +28,7 @@ export default function Carte({ type }: { type: string }) {
     /* RESTAURATION DE TON DESIGN : bg-white, shadow, rounded-xl */
     <div className="mx-auto md:m-5 w-11/12 md:w-full bg-white p-4 rounded-xl shadow min-h-[400px]">
       <h1 className="pb-10 text-xl md:text-2xl font-serif">
-        {type === "courbe" ? "Sales Overview" : "Revenue Overview"}
+        {type === "courbe" ? "Aperçu des ventes" : "Aperçu des revenues"}
       </h1>
 
       {/* Zone de mesure du graphique */}

@@ -5,9 +5,12 @@ import Accueil from "./Pages/Accueil";
 import Auth from "./Pages/Authentification";
 import Home from "./Pages/Home";
 import ProfilSeller from "./Pages/ProfilSeller";
-import Testes from "./Pages/Testes";
+import StatusVendeur from "./components/DetailsStatusVendeur";
 import api from "@/services/api";
-
+import Settings from "./components/Setting";
+import { Admin } from "./Pages/Admin";
+import Parametre from "./Pages/Parametre";
+import LayoutsLambako from "./layouts/LayoutsLambako";
 
 const router = () => {
   return createBrowserRouter([
@@ -35,10 +38,9 @@ const router = () => {
         };
 
         try {
-          const {data} = await api.post('auth/connexion/',body)
-          console.log("teste avec loaders : "+data)
-        } catch (error) {       
-        }
+          const { data } = await api.post("auth/connexion/", body);
+          console.log("teste avec loaders : " + data);
+        } catch (error) {}
       },
     },
     {
@@ -46,13 +48,25 @@ const router = () => {
       Component: Home,
     },
     {
+      path: "/:profil/settings",//route modification mdp pour tous les user : admin,vendeur,client
+      Component: Parametre,
+    },
+    {
       path: "/profilxxxx",
       Component: ProfilSeller,
-    },{
-      path: "/testes",
-      Component: Testes
-
-    }
+    },
+    {
+      path: "/admin",
+      Component: Admin
+    },
+    {
+      path: "/admin/settings",
+      element: <LayoutsLambako page="s"><Settings /></LayoutsLambako>
+    },
+    {
+      path: "/detail",
+      Component: StatusVendeur,
+    },
   ]);
 };
 

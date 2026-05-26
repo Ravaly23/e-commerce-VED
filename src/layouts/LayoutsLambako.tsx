@@ -1,16 +1,19 @@
 import type React from "react";
 import BarreNavigation from "../components/BarreNavigation";
 import { Outlet } from "react-router-dom";
+
 interface LayoutsProp{
     children? : React.ReactNode;
     page?: string;
+    onSearch?: (find:string) => void;
 }
 
-export default function LayoutsLambako({children , page}: LayoutsProp) {
+export default function LayoutsLambako({children , page,onSearch}: LayoutsProp) {
+ 
   return (
     <>
       <header>
-         <BarreNavigation type={page}/>
+         <BarreNavigation type={page} onSearch={onSearch}/>
       </header>
       <main className="">
          {children !== null ? children: <Outlet />}
@@ -42,32 +45,7 @@ export default function LayoutsLambako({children , page}: LayoutsProp) {
             </div>
           </div>
 
-          {/* 2. Lien*/}
-          <div>
-            <h3 className="font-bold text-gray-900 mb-6">Lien rapide</h3>
-            <ul className="space-y-3 text-gray-500 text-sm">
-              <li>
-                <a href="#" className="hover:text-red-500">
-                  Accueil
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-500">
-                  A propos
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-500">
-                  Shop
-                </a>
-              </li>
-              <li>
-                <a href="#" className="hover:text-red-500">
-                  Contactez-nous
-                </a>
-              </li>
-            </ul>
-          </div>
+       
 
           {/* 3. CONTACT US */}
           <div>
@@ -76,27 +54,7 @@ export default function LayoutsLambako({children , page}: LayoutsProp) {
               <li>+261 xx xx xxx xx</li>
               <li>+261 xx xx xxx xx</li>
             </ul>
-          </div>
-
-          {/* 4. NEWSLETTER */}
-          {/* <div>
-            <h3 className="font-bold text-gray-900 mb-2">
-              Abonnez-vous
-            </h3>
-            <p className="text-xl font-bold text-gray-900 mb-6">
-              Pour 
-            </p>
-            <div className="flex flex-col md:flex-row gap-y-2">
-              <input
-                type="email"
-                placeholder="Entrer votre email"
-                className="bg-gray-50 border border-gray-200 rounded-full px-4 py-2 text-sm flex-1 outline-none focus:border-red-400"
-              />
-              <button className="bg-red-500 text-white px-2 py-2 rounded-full text-sm font-semibold hover:bg-red-600 transition-colors">
-                Subscribe
-              </button>
-            </div>
-          </div> */}
+          </div>      
         </div>
       </footer>
     </>

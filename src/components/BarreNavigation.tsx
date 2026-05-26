@@ -1,18 +1,18 @@
+
 import NavAccueil from "./NavAccueil";
 import NavAdmin from "./NavAdminSeller";
 import NavConnected from "./NavConnected";
-import NavSuper from "./navSuperAdmin";
+
 interface BarreProps {
   type?: string;
+  onSearch?: (find:string) => void;
 }
-export default function BarreNavigation({ type }: BarreProps) {
+export default function BarreNavigation({ type ,onSearch }: BarreProps) {
   if (type === "accueil") {
     return <NavAccueil />;
   } else if (type === "adminSeller") {
-    return <NavAdmin />;
+    return <NavAdmin onSearch={onSearch}/>;
   } else if (type === "user") {
     return <NavConnected />;
-  } else {
-    return <NavSuper />;
-  }
+  } 
 }

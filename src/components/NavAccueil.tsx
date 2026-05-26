@@ -44,7 +44,7 @@ export default function NavAccueil(){
             {/* <button className="bg-gray-100 px-5 py-1.5 rounded-full text-sm font-semibold hover:bg-gray-200">
               Log In
             </button> */}
-            <LinkButton ref="/auth" text="Se connecter" font="font-bold font-serif" couleur="#ffffff" background="#D3D3D3"/>
+            <LinkButton ref="/auth" text="Se connecter" font="font-bold font-serif" couleur="text-white" background="bg-[#D3D3D3]" activeBtnStyle={true} />
 
             {/* Icône Loupe (Simplifiée) */}
             <button className="p-2 hover:bg-gray-100 rounded-full">

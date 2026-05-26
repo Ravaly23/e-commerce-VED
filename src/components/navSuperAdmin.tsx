@@ -3,44 +3,56 @@ import { useEffect, useState } from "react";
 import { FiSettings } from "react-icons/fi";
 import LinkButton from "./LinkButton";
 import { FiLogOut } from "react-icons/fi";
-import Bouton from "./ButtonInput";
+import { RiHome8Fill } from "react-icons/ri";
 import Menu from "./Menu";
+import { useAuth } from "@/context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import { AlertDialogBasic } from "../components/AlertDialog";
+
 export default function NavSuper() {
   const [etat, setEtat] = useState("hidden");
-
-
-
+  const navigate = useNavigate();
+  const { user, logout } = useAuth();
+  const handleLogout = () => {
+    logout();
+    navigate("/", { replace: true });
+  };
   return (
     <>
-      <nav className="flex items-center justify-between px-3 py-4 bg-white shadow-sm ">
+      <nav className="flex items-center justify-between px-10 py-4 bg-white shadow-sm ">
         {/* 1. LOGO */}
         <div className="shrink-0">
           <h1 className="text-2xl font-bold tracking-tighter italic text-red-600 hover:cursor-pointer">
             E-<span className="text-black">Lambako</span>
           </h1>
         </div>
-        <div className="hidden md:flex md:justify-between md:w-3/12 mr-3">
-          <LinkButton 
-          Icon={FaUser} 
-          text="Ravaly23" 
-          ref="/admin/" 
-          couleurTextHover={`hover:text-green-500`}
-
+        <div className="hidden md:flex md:justify-between  mr-3">
+          <LinkButton
+            Icon={FaUser}
+            // text="Ravaly23"
+            ref="/admin/"
+            couleurTextHover={`hover:text-green-500`}
+            title="Mon Profil"
           />
           <LinkButton
             Icon={FiSettings}
-            text="Paramètre"
+            // text="Paramètre"
             ref="/admin/settings"
             couleurTextHover={`hover:text-green-500`}
+            title="Paramètre"
           />
-          <Bouton
-            Icon={FiLogOut}
-            textBtn="Deconnexion"
-            type="button"
-            className="flex items-center md:text-xl justify-center py-1 px-3 hover:cursor-pointer hover:text-green-500"
-            styleIcon="mr-2"
-          />
-          {/* <div className="flex justify-center items-center  w-35 gap-x-2">
+            <AlertDialogBasic
+              title="Se deconnecter"
+              description="Voulez-vous vraiment vous deconnecter?"
+              buttonAction="OUI"
+              buttonCancel="NON"
+              buttonContent=""
+              action={handleLogout}
+              className="hover:cursor-pointer hover:text-green-500 md:text-xl md:bg-white text-black"
+              styleLink={true}
+            />
+          {/* "flex items-center md:text-xl justify-center py-1 px-3 hover:cursor-pointer hover:text-green-500"
+          <div className="flex justify-center items-center  w-35 gap-x-2">
             <FaUser />
             <p className="font-serif text-xl md:text-xl hover:cursor-pointer">
               Ravaly23
@@ -59,27 +71,25 @@ export default function NavSuper() {
             etat === "hidden" ? setEtat("inline-flex") : setEtat("hidden");
           }}
         >
-          <FaUser className="mr-11" title="Voir les menus"/>
+          <FaUser className="mr-11" title="Voir les menus" />
           <Menu etat={etat}>
-          <LinkButton 
-          Icon={FaUser} 
-          text="Ravaly23" 
-          ref="/admin/" 
-          
-          />
-          <LinkButton
-            Icon={FiSettings}
-            text="Paramètre"
-            ref="/admin/settings"
-            couleurTextHover="green-500"
-          />
-          <Bouton
-            Icon={FiLogOut}
-            textBtn="Deconnexion"
-            type="button"
-            className="flex items-center text-sm md:text-xl justify-center py-1 px-3 mr-8 hover:cursor-pointer"
-            styleIcon="mr-2"
-          />
+            <LinkButton Icon={FaUser} text="Ravaly23" ref="/admin/" />
+            <LinkButton
+              Icon={FiSettings}
+              text="Paramètre"
+              ref="/admin/settings"
+              couleurTextHover="green-500"
+            />
+            <AlertDialogBasic
+              title="Se deconnecter"
+              description="Voulez-vous vraiment vous deconnecter?"
+              buttonAction="OUI"
+              buttonCancel="NON"
+              buttonContent="Se deconnecter"
+              action={handleLogout}
+              className="hover:cursor-pointer hover:text-green-500 md:text-xl md:bg-white text-black"
+              styleLink={true}
+            />
           </Menu>
         </div>
       </nav>

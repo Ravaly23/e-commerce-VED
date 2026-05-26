@@ -3,7 +3,8 @@ import { IoMdCloudUpload, IoMdCloseCircle } from "react-icons/io";
 import LayoutsLambako from "../layouts/LayoutsLambako";
 import api from "@/services/api";
 import Bouton from "@/components/ButtonInput";
-
+import { useAuth } from "@/context/AuthContext";
+import { Toaster,toast } from "sonner";
 interface ProductData {
   title: string;
   category: string;
@@ -16,6 +17,7 @@ interface ProductData {
 }
 
 export default function AddArticle() {
+  const {user} = useAuth();
   const [images, setImages] = useState<File[]>([]);
   const [formData, setFormData] = useState<ProductData>({
     title: "",
@@ -27,89 +29,19 @@ export default function AddArticle() {
     description: "",
     qte: 0,
   });
-  const [nomV, setNomV] = useState(true);
-  const [categoryV, setCategorieV] = useState(true);
-  const [marqueV, setMarqueV] = useState(true);
-  const [tailleV, setTailleV] = useState(true);
-  const [conditionV, setConditionV] = useState(true);
-  const [qteV, setQteV] = useState(true);
-  const [prixV, setPrixV] = useState(true);
-  const [descV, setDescV] = useState(true);
-  const [imagesV,setImagesV] = useState(true);
 
-  //champ obligatoire *
-  useEffect(() => {
-    if (formData.title !== "") {
-      setNomV(false);
-    } else {
-      setNomV(true);
-    }
-  }, [formData.title]);
 
-  useEffect(() => {
-    if (formData.category !== "") {
-      console.log("selectionner");
-      setCategorieV(false);
-    } else if (formData.category === "") {
-      setCategorieV(true);
-    }
-  }, [formData.category]);
 
-  useEffect(() => {
-    if (formData.brand !== "") {
-      console.log("selectionner");
-      setMarqueV(false);
-    } else if (formData.brand === "") {
-      setMarqueV(true);
-    }
-  }, [formData.brand]);
-
-  useEffect(() => {
-    if (formData.size !== "") {
-      setTailleV(false);
-    } else if (formData.size === "") {
-      setTailleV(true);
-    }
-  }, [formData.size]);
-  useEffect(() => {
-    if (formData.condition !== "") {
-      setConditionV(false);
-    } else if (formData.size === "") {
-      setConditionV(true);
-    }
-  }, [formData.condition]);
-
-  useEffect(() => {
-    if (formData.qte > 0) {
-      setQteV(false);
-    } else if (formData.qte <= 0) {
-      setQteV(true);
-    }
-  }, [formData.qte]);
-
-  useEffect(() => {
-    if (formData.price > 0) {
-      setPrixV(false);
-    } else if (formData.price <= 0) {
-      setPrixV(true);
-    }
-  }, [formData.price]);
-
-  useEffect(() => {
-    if (formData.description !== "") {
-      setDescV(false);
-    } else if (formData.description === "") {
-      setDescV(true);
-    }
-  }, [formData.description]);
-
-  useEffect(()=>{
-    if(images.length > 0){
-      setImagesV(false);
-    }else if(images.length ===0){
-      setImagesV(true);
-    }
-  },[images])
+  // champ obligatoire *
+  const isTitleInvalid = formData.title === "";
+  const isCategoryInvalid = formData.category === "";
+  const isBrandInvalid = formData.brand === "";
+  const isSizeInvalid = formData.size === "";
+  const isConditionInvalid = formData.condition === "";
+  const isQteInvalid = formData.qte <= 0;
+  const isPriceInvalid = formData.price <= 0;
+  const isDescInvalid = formData.description === "";
+  const isImagesInvalid = images.length === 0;
 
   // Handle Text Inputs
   const handleInputChange = (
@@ -140,7 +72,7 @@ export default function AddArticle() {
     data.append("taille", formData.size);
     data.append("marque", formData.brand);
     data.append("condition", formData.condition);
-    data.append("id_vendeur", "Vendeur00001");
+    data.append("id_vendeur", user?.id ?? "");
     data.append("description", formData.description);
     data.append("prix", formData.price.toString());
 
@@ -148,22 +80,22 @@ export default function AddArticle() {
       images.forEach((file) => {
         data.append("fichiers", file);
       });
-      try {
-        const post = await api.postForm("article/ajout_article/", data, {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        });
-        if (post.status !== 201) {
-          throw new Error("Article non-ajouté");
-        }
-        console.log(post.data);
-      } catch (error: any) {
-        //les status autres que 200  sont géré ici
-        const erreur = error.response.data;
-        console.log(erreur.message);
-      }
-    }else{
+      // try {
+      //   const post = await api.postForm("article/ajout_article/", data, {
+      //     headers: {
+      //       "Content-Type": "multipart/form-data",
+      //     },
+      //   });
+      //   if (post.status !== 201) {
+      //     throw new Error("Article non-ajouté");
+      //   }
+      //   console.log(post.data);
+      // } catch (error: any) {
+      //   //les status autres que 200  sont géré ici
+      //   const erreur = error.response.data;
+      //   console.log(erreur.message);
+      // }
+    } else {
       console.log("Ajouter au moins une image ou video");
     }
   };
@@ -180,7 +112,7 @@ export default function AddArticle() {
           {/* Title */}
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
-              Nom {nomV ? <p className="text-red-600 ml-2">*</p> : ""}
+              Nom {isTitleInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <input
               type="text"
@@ -197,7 +129,7 @@ export default function AddArticle() {
             <div>
               <label className="flex text-sm font-semibold text-gray-700 mb-1">
                 Categorie{" "}
-                {categoryV ? <p className="text-red-600 ml-2">*</p> : ""}
+                {isCategoryInvalid && <p className="text-red-600 ml-2">*</p>}
               </label>
               <select
                 name="category"
@@ -220,7 +152,7 @@ export default function AddArticle() {
             </div>
             <div>
               <label className="flex text-sm font-semibold text-gray-700 mb-1">
-                Marque {marqueV ? <p className="text-red-600 ml-2">*</p> : ""}
+                Marque {isBrandInvalid && <p className="text-red-600 ml-2">*</p>}
               </label>
               <input
                 type="text"
@@ -237,7 +169,7 @@ export default function AddArticle() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="flex text-sm font-semibold text-gray-700 mb-1">
-                Taille {tailleV ? <p className="text-red-600 ml-2">*</p> : ""}
+                Taille {isSizeInvalid && <p className="text-red-600 ml-2">*</p>}
               </label>
               <select
                 name="size"
@@ -260,7 +192,7 @@ export default function AddArticle() {
             <div>
               <label className="flex text-sm font-semibold text-gray-700 mb-1">
                 Condition{" "}
-                {conditionV ? <p className="text-red-600 ml-2">*</p> : ""}
+                {isConditionInvalid && <p className="text-red-600 ml-2">*</p>}
               </label>
               <select
                 name="condition"
@@ -277,7 +209,7 @@ export default function AddArticle() {
           {/* Quantity */}
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
-              Quantité {qteV ? <p className="text-red-600 ml-2">*</p> : ""}
+              Quantité {isQteInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <input
               type="number"
@@ -291,7 +223,7 @@ export default function AddArticle() {
           {/* Price */}
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
-              Prix (MGA) {prixV ? <p className="text-red-600 ml-2">*</p> : ""}
+              Prix (MGA) {isPriceInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <input
               type="number"
@@ -305,7 +237,7 @@ export default function AddArticle() {
           {/* Description */}
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
-              Description {descV ? <p className="text-red-600 ml-2">*</p> : ""}
+              Description {isDescInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <textarea
               name="description"
@@ -319,7 +251,8 @@ export default function AddArticle() {
           {/* Multi-Image Upload Section */}
           <div className="pt-4">
             <label className="flex text-sm font-semibold text-gray-700 mb-2 font-serif">
-              Photos ou Videos de l'article {imagesV ? <p className="text-red-600 ml-2">*</p> : ""}
+              Photos ou Videos de l'article{" "}
+              {isImagesInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed border-gray-200 rounded-xl cursor-pointer bg-gray-50 hover:bg-gray-100 transition-all group">
               <IoMdCloudUpload

@@ -25,7 +25,7 @@ const Status = ({ status }: StatusProps) => {
         <p className="text-sm text-amber-950 font-bold">En attente</p>
       </div>
     );
-  } else if (status === "Actifs") {
+  } else if (status === "Actif") {
     return (
       <div className="flex  rounded-2xl items-center px-1 py-1 gap-x-2 bg-green-300 my-3 border-green-950 w-25">
         <GrStatusGood className="w-4 h-4 text-green-950 font-bold  ml-2" />
@@ -66,7 +66,7 @@ const StatusVendeur = ({
               <span className="text-gray-500 ml-4 ">{adress}</span>
             </li>
             <li className="flex flex-col md:flex-row">
-              {statusActuel === "Actifs" ? (
+              {statusActuel === "Actif" ? (
                 <>
                   <Status status={statusActuel} />
                   <p className="text-gray-400 font-bold text-sm my-2 md:m-5">
@@ -96,7 +96,7 @@ const StatusVendeur = ({
           </ul>
         </div>
         <div className="w-full md:w-55 flex justify-between">
-          {statusActuel === "Actifs" ? (
+          {statusActuel === "Actif" ? (
             <form action="">
               <Bouton
                 type="submit"

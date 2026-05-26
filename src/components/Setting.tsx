@@ -10,6 +10,7 @@ import {
   FaExclamationTriangle,
   FaCheckCircle,
 } from "react-icons/fa";
+import { useAuth } from "@/context/AuthContext";
 
 interface SettingProps {
   identifiant?: string;
@@ -19,7 +20,10 @@ interface SettingProps {
   confNouveauMdp?: string;
 }
 
+interface ParamProps{
+  role?: "admin"|"client"|"vendeur";
 
+}
 
 export default function Settings() {
   const [formData, setFormData] = useState<SettingProps>({
@@ -29,10 +33,8 @@ export default function Settings() {
     nouveauMdp: "",
     confNouveauMdp: "",
   });
-  const [nomVide, setNomVide] = useState(true);
-  const [mdpAncienVide, setmdpAncienVide] = useState(true);
-  const [nouveauMdpVide, setnouveauMdpVide] = useState(true);
-  const [nouveauConfMdpVide, setnouveauConfMdpVide] = useState(true);
+  const {user} = useAuth();
+
   const [showPasswordAncien, setShowPasswordAncien] = useState(false);
   const [showPasswordNew, setShowPasswordNew] = useState(false);
   const [showPasswordConf, setShowPasswordConf] = useState(false);
@@ -49,38 +51,12 @@ export default function Settings() {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
-  useEffect(() => {
-    if (formData.username !== "") {
-      setNomVide(false);
-    } else {
-      setNomVide(true);
-    }
-  }, [formData.username]);
 
-  useEffect(() => {
-    if (formData.ancienMdp !== "") {
-      setmdpAncienVide(false);
-    } else {
-      setmdpAncienVide(true);
-    }
-  }, [formData.ancienMdp]);
+  const nomInvalid = formData.username !== "" ? false : true;
+  const mdpAncienInvalid = formData.ancienMdp !== "" ? false : true;
+  const mdpNouveauInvalid = formData.nouveauMdp !== "" ? false : true;
+  const mdpConfInvalid = formData.confNouveauMdp !== "" ? false : true;
 
-  useEffect(() => {
-    if (formData.nouveauMdp !== "") {
-      setnouveauMdpVide(false);
-    } else {
-      setnouveauMdpVide(true);
-    }
-  }, [formData.nouveauMdp]);
-
-  useEffect(() => {
-    if (formData.confNouveauMdp !== "") {
-      setnouveauConfMdpVide(false);
-      
-    } else {
-      setnouveauConfMdpVide(true);
-    }
-  }, [formData.confNouveauMdp]);
 
   useEffect(() => {  
     if (formData.confNouveauMdp === formData.nouveauMdp && (formData.nouveauMdp !== "" || formData.confNouveauMdp !=="")) {
@@ -109,26 +85,23 @@ export default function Settings() {
         >
           {/* identifiant */}
           <div>
-            {/* <label className="block text-sm font-semibold text-gray-700 mb-1">
-              Identifiant
-            </label> */}
             <input
               type="hidden"
               name="idP"
               required
               placeholder="ex, Vintage Denim Jacket"
               className="w-full p-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
-              onChange={handleInputChange}
+              defaultValue={user?.id}
             />
           </div>
           {/* identifiant */}
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
-              Nom d'utilisateur{" "}
-              {nomVide ? <p className="text-red-600 ml-2">*</p> : ""}
+              Email{" "}
+              {nomInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <Inpute
-              type="text"
+              type="email"
               name="username"
               placeholder=""
               className="w-full pt-3 pb-3 pl-10 pr-3 bg-gray-50 rounded-lg border border-gray-200 focus:outline-none focus:ring-2 focus:ring-[rgb(32,202,202)]"
@@ -141,7 +114,7 @@ export default function Settings() {
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
               Ancien Mots de Passe{" "}
-              {mdpAncienVide ? <p className="text-red-600 ml-2">*</p> : ""}
+              {mdpAncienInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <Inpute
               type={showPasswordAncien ? "text" : "password"}
@@ -159,7 +132,7 @@ export default function Settings() {
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
               Nouveau mots de pass{" "}
-              {nouveauMdpVide ? <p className="text-red-600 ml-2">*</p> : ""}
+              {mdpNouveauInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <Inpute
               type={showPasswordNew ? "text" : "password"}
@@ -177,7 +150,7 @@ export default function Settings() {
           <div>
             <label className="flex text-sm font-semibold text-gray-700 mb-1">
               Confirmer nouveau mots de pass{" "}
-              {nouveauConfMdpVide ? <p className="text-red-600 ml-2">*</p> : ""}
+              {mdpConfInvalid && <p className="text-red-600 ml-2">*</p>}
             </label>
             <Inpute
               type={showPasswordConf ? "text" : "password"}

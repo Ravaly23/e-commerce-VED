@@ -11,7 +11,8 @@ interface InputProps {
     marginBottom?: string,
     passwordVerify? : boolean,
     className?: string,
-    defaultValue?:string
+    defaultValue?:string,
+    // onChange?: ()=>{}
 }
 
 export default function Inpute({ type, placeholder,name, onChange, onClick,onKeyUp,iconLeft, iconRight, iconValid, marginBottom,passwordVerify,className,defaultValue}: InputProps) {

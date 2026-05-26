@@ -8,65 +8,86 @@ import ProfilSeller from "./Pages/ProfilSeller";
 import StatusVendeur from "./components/DetailsStatusVendeur";
 import api from "@/services/api";
 import Settings from "./components/Setting";
-import { Admin } from "./Pages/Admin";
-import Parametre from "./Pages/Parametre";
+import HomePageAdmin from "./Pages/HomePageAdmin";
 import LayoutsLambako from "./layouts/LayoutsLambako";
-
+import RegistrationCompletion from "./Pages/RegistrationCompletion";
+import MotDePasseOublier from "./Pages/MotDePasseOublier";
+import AccountTypeSelection from "./Pages/AccoutTypeSelection";
+import DemandeReinitialisationMdp from "./Pages/DemandeReinitialisationMdp";
+import { protectedLoader } from "./utils/auth";
+import Unauthorized from "./Pages/PageUnAuthorized";
+import { OnlySeller } from "./utils/OnlySeller";
+import { Admin } from "./Pages/Admin";
+import ParametreAdmin from "./Pages/ParametreAdmin";
 const router = () => {
   return createBrowserRouter([
     {
       path: "/",
       Component: Accueil,
     },
+
     {
-      path: "/profilxxxx/Add",
-      Component: AddArticle,
-    },
-    {
-      path: "/profilxxxx/dashboard",
-      Component: Dashboard,
+      path: "/forget-password/:token/",
+      Component: MotDePasseOublier,
     },
     {
       path: "/auth",
       Component: Auth,
-      action: async ({ request }) => {
-        const formData = await request.formData();
-
-        const body = {
-          email: formData.get("email"),
-          password: formData.get("password"),
-        };
-
-        try {
-          const { data } = await api.post("auth/connexion/", body);
-          console.log("teste avec loaders : " + data);
-        } catch (error) {}
-      },
     },
     {
-      path: "/profilxxxx/home",
+      path: "/:profil/home",
+      loader: protectedLoader,
       Component: Home,
     },
     {
-      path: "/:profil/settings",//route modification mdp pour tous les user : admin,vendeur,client
-      Component: Parametre,
-    },
-    {
-      path: "/profilxxxx",
-      Component: ProfilSeller,
-    },
-    {
       path: "/admin",
-      Component: Admin
+      Component: HomePageAdmin
+    },
+    {
+      path:"/admin/home",
+      Component: Admin ,
     },
     {
       path: "/admin/settings",
-      element: <LayoutsLambako page="s"><Settings /></LayoutsLambako>
+      Component: ParametreAdmin
     },
     {
       path: "/detail",
       Component: StatusVendeur,
+    },{
+      path: "/account-type",
+      Component: AccountTypeSelection,
     },
+    {
+      path: "/finalization",
+      Component: RegistrationCompletion,
+    },
+    {
+      path: "/password-reset",
+      Component: DemandeReinitialisationMdp,
+    },   
+          //route vendeur
+    {
+      path: "/:profil/dashboard",
+      loader: OnlySeller,
+      Component: Dashboard,
+    },
+    {
+      path: "/:profil/Add",
+      loader: OnlySeller,
+      Component: AddArticle,
+    },
+{
+      path: "/:profil/profil",
+      loader: OnlySeller,
+      Component: ProfilSeller,
+    },
+    {
+      //page pour erreur 403
+      path:"/unAuthorize",
+      Component:Unauthorized
+    }
+    
   ]);
 };
 

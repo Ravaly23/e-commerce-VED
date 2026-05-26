@@ -10,9 +10,9 @@ const Menu = ({etat,children}:MenuProps) => {
   return (
     <>
       {" "}
-      <div className={`${etat} fixed z-100`}>
-        <div className="fixed right-13 top-13 bg-gray-100 w-7 h-7 rotate-45 shadow-2xs z-20"></div>
-        <div className={`fixed right-5 top-15 bg-gray-100 w-35 border h-auto  shadow-2xs z-30 pb-2 pt-2`}>
+      <div className={`${etat} absolute top-1 -right-0.5 z-100`}>
+        <div className="absolute right-13 top-13 bg-gray-100 w-7 h-7 rotate-45 shadow-2xs z-20"></div>
+        <div className={`absolute right-5 top-15 bg-gray-100 w-35 border h-auto  shadow-2xs z-30 pb-2 pt-2`}>
            {children}
         </div>
       </div>

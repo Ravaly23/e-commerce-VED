@@ -80,21 +80,21 @@ export default function AddArticle() {
       images.forEach((file) => {
         data.append("fichiers", file);
       });
-      // try {
-      //   const post = await api.postForm("article/ajout_article/", data, {
-      //     headers: {
-      //       "Content-Type": "multipart/form-data",
-      //     },
-      //   });
-      //   if (post.status !== 201) {
-      //     throw new Error("Article non-ajouté");
-      //   }
-      //   console.log(post.data);
-      // } catch (error: any) {
-      //   //les status autres que 200  sont géré ici
-      //   const erreur = error.response.data;
-      //   console.log(erreur.message);
-      // }
+      try {
+        const post = await api.postForm("article/ajout_article/", data, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        });
+        if (post.status !== 201) {
+          throw new Error("Article non-ajouté");
+        }
+        console.log(post.data);
+      } catch (error: any) {
+        //les status autres que 200  sont géré ici
+        const erreur = error.response.data;
+        console.log(erreur.message);
+      }
     } else {
       console.log("Ajouter au moins une image ou video");
     }

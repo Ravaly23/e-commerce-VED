@@ -76,7 +76,6 @@ const router = () => {
       Component: Dashboard,
     },
     {
-<<<<<<< HEAD
       path: "/:profil/Add",
       loader: OnlySeller,
       Component: AddArticle,
@@ -90,9 +89,8 @@ const router = () => {
       //page pour erreur 403
       path:"/unAuthorize",
       Component:Unauthorized
-    }
-    
-=======
+    },
+    {
       path: "/favoris",
       Component: FavoritesPage,
     },
@@ -104,7 +102,6 @@ const router = () => {
       path: "/historique",
       Component: OrderHistoryPage,
     },
->>>>>>> a40814caa957a9fb07b8f58058ee904765ba653c
   ]);
 };
 

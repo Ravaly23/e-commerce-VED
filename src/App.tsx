@@ -9,6 +9,9 @@ import RegistrationCompletion from "./Pages/RegistrationCompletion";
 import MotDePasseOublier from "./Pages/MotDePasseOublier";
 import AccountTypeSelection from "./Pages/AccoutTypeSelection";
 import DemandeReinitialisationMdp from "./Pages/DemandeReinitialisationMdp";
+import FavoritesPage from "./Pages/FavoritesPage";
+import CartPage from "./Pages/CartPage";
+import OrderHistoryPage from "./Pages/OrderHistoryPage";
 import { protectedLoader } from "./utils/auth";
 
 const router = () => {
@@ -54,6 +57,18 @@ const router = () => {
     {
       path: "/password-reset",
       Component: DemandeReinitialisationMdp,
+    },
+    {
+      path: "/favoris",
+      Component: FavoritesPage,
+    },
+    {
+      path: "/panier",
+      Component: CartPage,
+    },
+    {
+      path: "/historique",
+      Component: OrderHistoryPage,
     },
   ]);
 };

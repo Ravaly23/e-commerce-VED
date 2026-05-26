@@ -185,10 +185,6 @@ export default function CartPage() {
   const [toast, setToast] = useState({ visible: false, message: "" });
   const [checkoutLoading, setCheckoutLoading] = useState(false);
 
-  useEffect(() => {
-    console.log(cart);
-  }, [cart]);
-
   const showToast = (message: string) => {
     setToast({ visible: true, message });
     setTimeout(() => setToast({ visible: false, message: "" }), 2500);

@@ -19,6 +19,7 @@ export interface Item {
   state?: string;
   condition: string;
   id_seller?: string;
+  genre : string;
   image: string;
 }
 

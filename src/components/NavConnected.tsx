@@ -5,11 +5,11 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate, NavLink } from "react-router-dom";
+import { useNavigate, NavLink, href } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Input from "./Input";
-import { useCart } from "@/hooks/useCart"; 
+import { useCart } from "@/hooks/useCart";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface NavConnectedProps {
@@ -19,12 +19,10 @@ interface NavConnectedProps {
 
 // ─── Catégories ───────────────────────────────────────────────────────────────
 const CATEGORIES = [
+  { label: "Toutes catégories", href: "",highlight : true },
   { label: "Nouveautés", href: "/nouveautes" },
   { label: "Femme", href: "/femme" },
   { label: "Homme", href: "/homme" },
-  { label: "Enfant", href: "/enfant" },
-  { label: "Accessoires", href: "/accessoires" },
-  { label: "Soldes", href: "/soldes", highlight: true },
 ];
 
 // ─── Dropdown Profil ──────────────────────────────────────────────────────────

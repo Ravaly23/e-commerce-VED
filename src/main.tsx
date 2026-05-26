@@ -6,12 +6,15 @@ import App from "./App";
 import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "sonner";
+import CartProvider from "./context/CartContext";
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
-      <Toaster/>
-      <RouterProvider router={App()} />,
+      <CartProvider>
+        <Toaster />
+        <RouterProvider router={App()} />
+      </CartProvider>
     </AuthProvider>
   </StrictMode>,
 );

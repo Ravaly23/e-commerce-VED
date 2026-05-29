@@ -26,13 +26,13 @@ export default function Carte({ type }: { type: string }) {
 
   return (
     /* RESTAURATION DE TON DESIGN : bg-white, shadow, rounded-xl */
-    <div className="mx-auto md:m-5 w-11/12 md:w-full bg-white p-4 rounded-xl shadow min-h-[400px]">
+    <div className="mx-auto  w-10/12 md:w-full bg-white p-4 rounded-xl shadow min-h-100">
       <h1 className="pb-10 text-xl md:text-2xl font-serif">
-        {type === "courbe" ? "Sales Overview" : "Revenue Overview"}
+        {type === "courbe" ? "Aperçu des ventes" : "Aperçu des revenues"}
       </h1>
 
       {/* Zone de mesure du graphique */}
-      <div ref={containerRef} className="w-full h-[300px]">
+      <div ref={containerRef} className="w-full h-75">
         {width > 0 && (
           <>
             {type === "courbe" ? (

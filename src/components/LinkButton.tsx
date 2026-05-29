@@ -9,7 +9,10 @@ interface LienProps {
   backgroundHover?: string;
   icone?: boolean;
   Icon?:IconType;
-  font?: string
+  font?: string;
+  activeBtnStyle?: boolean;
+  onClick?: ()=> void;
+  title?:string
 }
 
 
@@ -22,18 +25,24 @@ export default function LinkButton({
   backgroundHover,
   icone,
   Icon,
-  font
+  font,
+  activeBtnStyle,
+  onClick,
+  title
 }: LienProps) {
   return (
     <>
       <Link
         to={`${ref}`}
-        style={{ backgroundColor: background, color: couleur }}
-        className={`${font} relative inline-flex border rounded-2xl text-[3.5vw] pt-[0.7vw] pb-[0.7vw]  pr-[1.5vw] 
-       hover:cursor-pointer md:pt-[0.2vw] md:pb-[0.5vw] ${icone ? "md:pl-[2vw] pl-[4vw]" : "md:pl-[1vw] pl-[1.5vw]"}  md:pl-[1vw] md:pr-[1vw] md:text-xl 
-       hover:text-[${couleurTextHover}] hover:bg-[${backgroundHover}] text-[${couleur}]`}
+
+        className={`${font} ${background} inline-flex ${activeBtnStyle ? "border" : ""} rounded-2xl text-[3.5vw] pt-[0.7vw] pb-[0.7vw]  pr-[1.5vw] 
+       hover:cursor-pointer md:pt-[0.2vw] md:pb-[0.2vw] ${icone ? "md:pl-1 pl-[4vw]" : "md:pl-[1vw] pl-[1.5vw]"}  md:pl-[1vw] md:pr-[1vw] md:text-xl 
+       ${couleurTextHover} hover:${backgroundHover} ${couleur} items-center `}
+        onClick={onClick}
+        title={title}
       >
-        {Icon && <Icon className="relative top-2 right-2 md:right-3 md:top-[0.45vw]" size={20} />}
+        {/* className="relative top-2 right-2 md:right-3 md:top-[0.45vw]" */}
+        {Icon && <Icon className="mr-3" size={20} />}
         <span>{text}</span>
       </Link>
     </>

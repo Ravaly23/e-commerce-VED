@@ -56,14 +56,14 @@ export default function FormulaireConnexion() {
       password: password,
     };
 
-    const result = await login(body);
+    const result = await login(body,"auth/connexion/");
 
     if (result.success) {
       const role = result?.data.role;
       if (role === "client") {
         navigate("/home");
       } else if (role === "vendeur") {
-        navigate("/profilxxxx/dashboard");
+        navigate("/"+result?.data.utilisateur.username+"/dashboard");
       }
     } else {
     }

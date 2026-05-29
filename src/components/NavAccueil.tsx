@@ -14,22 +14,22 @@ export default function NavAccueil(){
           <ul className="hidden md:flex items-center gap-x-8 text-sm font-medium text-gray-600">
             <li>
               <a href="#" className="hover:text-red-500 transition-colors">
-                Home
+                Accueil
               </a>
             </li>
             <li>
               <a href="#" className="hover:text-red-500 transition-colors">
-                Shop
+                Boutique
               </a>
             </li>
             <li>
               <a href="#" className="hover:text-red-500 transition-colors">
-                About Us
+                A propos
               </a>
             </li>
             <li>
               <a href="#" className="hover:text-red-500 transition-colors">
-                Contact Us
+                Contactez-nous
               </a>
             </li>
             <li>
@@ -44,7 +44,7 @@ export default function NavAccueil(){
             {/* <button className="bg-gray-100 px-5 py-1.5 rounded-full text-sm font-semibold hover:bg-gray-200">
               Log In
             </button> */}
-            <LinkButton ref="/auth" text="log in" font="font-bold font-serif" couleur="#ffffff" background="#D3D3D3"/>
+            <LinkButton ref="/auth" text="Se connecter" font="font-bold font-serif" couleur="text-white" background="bg-[#D3D3D3]" activeBtnStyle={true} />
 
             {/* Icône Loupe (Simplifiée) */}
             <button className="p-2 hover:bg-gray-100 rounded-full">

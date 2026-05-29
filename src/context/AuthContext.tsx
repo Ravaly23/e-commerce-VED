@@ -26,6 +26,7 @@ interface AuthContextType {
   loading: boolean;
   login: (
     userData: DataUser,
+    route: string,
   ) => Promise<{ success: boolean; message: string; data?: any }>;
   logout: () => void;
 }
@@ -56,16 +57,16 @@ export function AuthProvider({ children }: AuthProviderProps) {
       setLoading(false);
     }
   }, []);
-
+  
   // La fonction login
-  async function login(dataUser: DataUser) {
+  async function login(dataUser: DataUser,route : string) {
     setLoading(true);
 
     try {
       // response contiendra la réponse HTTP AxiosResponse en cas de succès
       const response = await (
         await toast
-          .promise(api.post("auth/connexion/", dataUser), {
+          .promise(api.post(route, dataUser), {
             position: "top-center",
             loading: "Connexion...",
             success: (response) => {

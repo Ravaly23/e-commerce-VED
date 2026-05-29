@@ -7,6 +7,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
+  AlertDialogAction
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { CiLogout } from "react-icons/ci";
@@ -18,6 +19,8 @@ interface AlertDialogBasicProps {
   buttonCancel: string;
   buttonAction: string;
   action?: () => void;
+  styleLink?: boolean;
+  className?: string;
 }
 
 export function AlertDialogBasic({
@@ -27,13 +30,18 @@ export function AlertDialogBasic({
   buttonCancel,
   buttonAction,
   action,
+  styleLink,
+  className,
 }: AlertDialogBasicProps) {
   return (
     <AlertDialog>
-      <AlertDialogTrigger asChild>
-        <Button variant="outline">
-          <CiLogout className="text-black text-2xl" /> {buttonContent}
-        </Button>
+      <AlertDialogTrigger asChild> 
+       {
+       styleLink ? 
+       <Button  className={className} title={title}><CiLogout className="text-gray-900 text-2xl"/> {buttonContent}</Button> 
+       : 
+       <Button variant="default" className="hover:cursor-pointer" title=""><CiLogout className="text-black text-2xl"/> {buttonContent}</Button>
+       } 
       </AlertDialogTrigger>
       <AlertDialogContent>
         <AlertDialogHeader>
@@ -41,16 +49,8 @@ export function AlertDialogBasic({
           <AlertDialogDescription>{description}</AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel>{buttonCancel}</AlertDialogCancel>
-          {/* ✅ Button normal au lieu de AlertDialogAction */}
-          <Button
-            variant="destructive"
-            onClick={() => {
-              action?.();
-            }}
-          >
-            {buttonAction}
-          </Button>
+          <AlertDialogCancel className="hover:cursor-pointer">{buttonCancel}</AlertDialogCancel>
+          <AlertDialogAction onClick={action} className="hover:cursor-pointer">{buttonAction}</AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
     </AlertDialog>

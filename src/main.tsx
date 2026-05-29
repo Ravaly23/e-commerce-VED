@@ -1,4 +1,5 @@
-import { StrictMode } from "react";
+import { createContext, StrictMode, useState } from 'react'
+import './index.css'
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App";
@@ -9,7 +10,7 @@ import CartProvider from "./context/CartContext";
 import { GenreProvider } from "./context/GenreContext";
 import { SearchProvider } from "./context/SearchContext";
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <AuthProvider>
       <CartProvider>

@@ -548,7 +548,7 @@ export default function FavoritesPage() {
           </div>
 
           {favorites.length === 0 ? (
-            <EmptyState onBrowse={() => navigate("/profilxxxx/home")} />
+            <EmptyState onBrowse={() => navigate("/home")} />
           ) : (
             <>
               {/* ── FILTRES + VUES ────────────────────────────────────── */}

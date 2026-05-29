@@ -5,11 +5,14 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { CiLogout } from "react-icons/ci";
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/context/AuthContext";
-import { useNavigate, NavLink, href } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import Input from "./Input";
 import { useCart } from "@/hooks/useCart";
+import { useGenre } from "@/hooks/useGenre";
+import type { Genre } from "@/context/GenreContext";
+import { useSearch } from "@/hooks/useSearch";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 interface NavConnectedProps {
@@ -18,12 +21,10 @@ interface NavConnectedProps {
 }
 
 // ─── Catégories ───────────────────────────────────────────────────────────────
-const CATEGORIES = [
-  { label: "Toutes catégories", href: "",highlight : true },
-  { label: "Nouveautés", href: "/nouveautes" },
-  { label: "Femme", href: "/femme" },
-  { label: "Homme", href: "/homme" },
-];
+interface CategorieType {
+  label: Genre;
+  highlight: boolean;
+}
 
 // ─── Dropdown Profil ──────────────────────────────────────────────────────────
 function ProfileDropdown({
@@ -84,7 +85,7 @@ function ProfileDropdown({
           <button
             className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors flex items-center gap-2"
             onClick={() => {
-              navigate("/historique");
+              navigate("/home/historique");
               setOpen(false);
             }}
           >
@@ -139,20 +140,6 @@ function ProfileDropdown({
               </div>
             )}
           </div>
-          {/* <div className="border-t border-gray-100 mt-1 pt-1">
-            <AlertDialogBasic
-              title="Se déconnecter ?"
-              description="Voulez-vous vraiment vous déconnecter ?"
-              buttonAction="Oui, déconnecter"
-              buttonCancel="Annuler"
-              buttonContent="Se déconnecter"
-              action={() => {
-                onLogout();
-                setOpen(false);
-                navigate("/");
-              }}
-            />
-          </div> */}
         </div>
       )}
     </div>
@@ -164,11 +151,28 @@ export default function NavConnected({
   // cartCount = 0,
   favoritesCount = 0,
 }: NavConnectedProps) {
-  const [valueSearch, setValueSearch] = useState("");
+  // const [valueSearch, setValueSearch] = useState("");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const { cartCount } = useCart();
+  const { activeGenre, setActiveGenre } = useGenre();
+  const { valueSearch, setValueSearch } = useSearch();
   const navigate = useNavigate();
+  const [categorie, setCategories] = useState<CategorieType[]>([
+    { label: "Toutes catégories", highlight: true },
+    { label: "Nouveautés", highlight: false },
+    { label: "Femme", highlight: false },
+    { label: "Homme", highlight: false },
+  ]);
+
+  const selectionnerCategorie = (labelCliquer: Genre) => {
+    setCategories((prevCategories) =>
+      prevCategories.map((cat) => ({
+        ...cat,
+        highlight: cat.label === labelCliquer, // true pour la catégorie cliquée, false pour les autres
+      })),
+    );
+  };
 
   const handleLogout = () => {
     logout();
@@ -227,7 +231,7 @@ export default function NavConnected({
             variant="ghost"
             size="sm"
             className="relative hidden sm:flex items-center gap-1.5"
-            onClick={() => navigate("/favoris")}
+            onClick={() => navigate("favoris")}
             aria-label={`Favoris${favoritesCount > 0 ? `, ${favoritesCount} article(s)` : ""}`}
           >
             <span className="relative">
@@ -246,7 +250,7 @@ export default function NavConnected({
             variant="ghost"
             size="sm"
             className="relative flex items-center gap-1.5"
-            onClick={() => navigate("/panier")}
+            onClick={() => navigate("/home/panier")}
             aria-label={`Panier, ${cartCount} article(s)`}
           >
             <span className="relative">
@@ -263,14 +267,6 @@ export default function NavConnected({
           {/* Dropdown profil (contient historique + déconnexion) */}
           <ProfileDropdown user={user} onLogout={handleLogout} />
 
-          {/* <AlertDialogBasic
-            title="Se déconnecter ?"
-            description="Voulez-vous vraiment vous déconnecter ?"
-            buttonAction="Oui, déconnecter"
-            buttonCancel="Annuler"
-            buttonContent="Se déconnecter"
-            action={()=> handleLogout()}
-          /> */}
           {/* Hamburger mobile */}
           <Button
             variant="ghost"
@@ -303,24 +299,30 @@ export default function NavConnected({
 
       {/* ── BARRE CATÉGORIES (desktop) ────────────────────────────────── */}
       <div className="hidden md:flex items-center gap-6 px-6 py-2 bg-white border-b border-gray-100">
-        {CATEGORIES.map((cat) => (
-          <NavLink
-            key={cat.href}
-            to={cat.href}
-            className={({ isActive }) =>
-              [
+        {categorie.map((cat) => {
+          const isActive = activeGenre === cat.label;
+          return (
+            <button
+              key={cat.label}
+              onClick={() => {
+                setActiveGenre(cat.label);
+                selectionnerCategorie(cat.label);
+              }}
+              className={[
                 "text-sm font-medium pb-1 border-b-2 transition-colors duration-150",
                 cat.highlight
-                  ? "text-red-600 border-transparent hover:border-red-400"
+                  ? isActive
+                    ? "text-red-600 border-red-500"
+                    : "text-red-600 border-transparent hover:border-red-400"
                   : isActive
                     ? "text-black border-black"
                     : "text-gray-600 border-transparent hover:text-black hover:border-gray-300",
-              ].join(" ")
-            }
-          >
-            {cat.label}
-          </NavLink>
-        ))}
+              ].join(" ")}
+            >
+              {cat.label}
+            </button>
+          );
+        })}
       </div>
 
       {/* ── MENU MOBILE ──────────────────────────────────────────────── */}
@@ -345,32 +347,36 @@ export default function NavConnected({
           </div>
           {/* Catégories mobile */}
           <div className="px-4 py-1 flex flex-col">
-            {CATEGORIES.map((cat) => (
-              <NavLink
-                key={cat.href}
-                to={cat.href}
-                onClick={() => setMobileMenuOpen(false)}
-                className={({ isActive }) =>
-                  [
-                    "py-3 text-sm font-medium border-b border-gray-50 last:border-0 transition-colors",
+            {categorie.map((cat) => {
+              const isActive = activeGenre === cat.label;
+              return (
+                <button
+                  key={cat.label}
+                  onClick={() => {
+                    setActiveGenre(cat.label);
+                    selectionnerCategorie(cat.label);
+                    setMobileMenuOpen(false);
+                  }}
+                  className={[
+                    "py-3 text-sm font-medium border-b border-gray-50 last:border-0 text-left transition-colors",
                     cat.highlight
                       ? "text-red-600"
                       : isActive
-                        ? "text-black"
+                        ? "text-black font-semibold"
                         : "text-gray-600",
-                  ].join(" ")
-                }
-              >
-                {cat.label}
-              </NavLink>
-            ))}
+                  ].join(" ")}
+                >
+                  {cat.label}
+                </button>
+              );
+            })}
           </div>
           {/* Favoris (visible uniquement mobile) */}
           <div className="px-4 py-3 border-t border-gray-100">
             <button
               className="flex items-center gap-2 text-sm text-gray-600"
               onClick={() => {
-                navigate("/favoris");
+                navigate("/home/favoris");
                 setMobileMenuOpen(false);
               }}
             >
@@ -388,81 +394,3 @@ export default function NavConnected({
     </header>
   );
 }
-
-// import { FaSearch, FaRegUser } from "react-icons/fa";
-// import { MdOutlineShoppingCart, MdFavoriteBorder } from "react-icons/md";
-// import { LiaHistorySolid } from "react-icons/lia";
-// import { BiLogOut } from "react-icons/bi";
-// import Input from "./Input";
-// import { useState } from "react";
-// import { useAuth } from "@/context/AuthContext";
-// import { useNavigate } from "react-router-dom";
-// import { AlertDialogBasic } from "../components/AlertDialog";
-// import { Button } from "@/components/ui/button";
-// import type { DropDownMenuContent } from "../components/DropdownMenuIcon";
-// import { DropdownMenuIcons } from "../components/DropdownMenuIcon";
-
-// export default function NavConnected() {
-//   const [valueSearch, setValueSearch] = useState("");
-//   const { user, logout } = useAuth();
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     logout();
-//     navigate("/", { replace: true });
-//   };
-
-//   const element: DropDownMenuContent[] = [
-//     { icon: <FaRegUser />, label: "Mon profil" },
-//     { icon: <LiaHistorySolid />, label: "Historique" },
-//     { icon: <BiLogOut />, label: "Déconnexion" },
-//   ];
-//   return (
-//     <>
-//       <nav className="flex items-center justify-between px-5 py-4 bg-white shadow-sm">
-//         {/* 1. LOGO */}
-//         <div className="shrink-0">
-//           <h1 className="text-2xl font-bold tracking-tighter italic text-red-600 hover:cursor-pointer">
-//             E-<span className="text-black">Lambako</span>
-//           </h1>
-//         </div>
-
-//         {/* 2. LIENS (Centrés) */}
-//         <div className="hidden md:inline-flex">
-//           <Input
-//             type="text"
-//             placeholder="Search Items"
-//             value={valueSearch}
-//             iconRight={<FaSearch />}
-//             onChange={(e) => setValueSearch(e.target.value)}
-//           />
-//         </div>
-//         <div className="flex justify-center items-center gap-x-2 pr-5">
-//           {/* <FaUser /> */}
-//           {/* <p className="font-serif text-xl md:text-xl">{user?.username}</p> */}
-//           {/* <Button variant="outline">
-//             <LiaHistorySolid /> Historique
-//           </Button>
-//           <Button variant="outline">
-//             <FaRegUser /> Mon profil
-//           </Button> */}
-//           <Button variant="outline">
-//             <MdFavoriteBorder /> Favoris
-//           </Button>
-//           <Button variant="outline">
-//             <MdOutlineShoppingCart /> Panier
-//           </Button>
-//           <DropdownMenuIcons trigger="Moi" content={element} />
-//           <AlertDialogBasic
-//             title="Log out?"
-//             description="Are you sure want to log out?"
-//             buttonAction="Yes"
-//             buttonCancel="No"
-//             buttonContent="Log out"
-//             action={handleLogout}
-//           />
-//         </div>
-//       </nav>
-//     </>
-//   );
-// }

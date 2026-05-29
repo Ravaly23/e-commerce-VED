@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { MdOutlineShoppingCart } from "react-icons/md";
 import { FiChevronRight, FiTruck, FiShield, FiRefreshCw } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
@@ -262,7 +262,7 @@ export default function CartPage() {
           </div>
 
           {items.length === 0 ? (
-            <EmptyCart onBrowse={() => navigate("/profilxxxx/home")} />
+            <EmptyCart onBrowse={() => navigate("/home")} />
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
               {/* ── COLONNE GAUCHE : articles + options ────────────────── */}
@@ -460,7 +460,6 @@ export default function CartPage() {
           )}
         </div>
       </div>
-
       <Toast message={toast.message} visible={toast.visible} />
     </>
   );

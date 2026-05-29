@@ -61,7 +61,7 @@ export default function FormulaireConnexion() {
     if (result.success) {
       const role = result?.data.role;
       if (role === "client") {
-        navigate("/profilxxxx/home");
+        navigate("/home");
       } else if (role === "vendeur") {
         navigate("/profilxxxx/dashboard");
       }

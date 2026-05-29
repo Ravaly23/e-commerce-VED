@@ -6,13 +6,19 @@ import { RouterProvider } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { Toaster } from "sonner";
 import CartProvider from "./context/CartContext";
+import { GenreProvider } from "./context/GenreContext";
+import { SearchProvider } from "./context/SearchContext";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AuthProvider>
       <CartProvider>
-        <Toaster />
-        <RouterProvider router={App()} />
+        <GenreProvider>
+          <SearchProvider>
+            <Toaster />
+            <RouterProvider router={App()} />
+          </SearchProvider>
+        </GenreProvider>
       </CartProvider>
     </AuthProvider>
   </StrictMode>,

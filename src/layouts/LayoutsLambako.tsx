@@ -1,18 +1,21 @@
 import type React from "react";
 import BarreNavigation from "../components/BarreNavigation";
+import { useNavigation } from "react-router-dom";
+import { Spinner } from "@/components/ui/spinner";
 interface LayoutsProp{
     children? : React.ReactNode;
     page?: string;
 }
 
 export default function LayoutsLambako({children , page}: LayoutsProp) {
+  const navigation = useNavigation();
   return (
     <>
       <header>
          <BarreNavigation type={page}/>
       </header>
       <main className="">
-         {children}
+         {navigation.state === "loading" ? <Spinner /> : children}
       </main>
       <footer className="bg-white pt-16 pb-8 px-8 md:pl-8 md:pr-25 border-t border-gray-100 shadow-sm">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-y-12">

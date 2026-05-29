@@ -1,26 +1,35 @@
 import { useState } from "react";
 import { MdFavorite, MdOutlineShoppingCart } from "react-icons/md";
-import { FaRegHeart } from 'react-icons/fa'
+import { FaRegHeart } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { TbListDetails } from "react-icons/tb";
 import formatPrice from "@/utils/formatPrice";
 
+interface Fichier {
+  id_fichier: string;
+  fichier: string;
+  type: string;
+  taille: string;
+  id_article: string;
+}
+
 export interface Item {
-  id: string;
-  name: string;
-  description?: string;
-  price: number;
-  note?: number;
-  date_added?: string;
-  size?: string;
-  brand: string;
-  quantity: number;
+  id_article: string;
+  nom: string;
+  description: string;
+  prix: number;
+  note: number;
+  fichiers: Fichier[];
+  date_ajout: string;
+  date_ajout_relative: string;
+  taille: string;
+  marque: string;
+  quantite: number;
   category: string;
-  state?: string;
+  etat_article: string;
   condition: string;
-  id_seller?: string;
-  genre : string;
-  image: string;
+  id_vendeur: string;
+  genre: string;
 }
 
 export default function ArticleCart({
@@ -29,16 +38,17 @@ export default function ArticleCart({
   onAddToCart,
 }: {
   item: Item;
-  onRemove: (id: string) => void; // enlever un article dans le favoris 
+  onRemove: (id: string) => void; // enlever un article dans le favoris
   onAddToCart: (item: Item) => void;
 }) {
   const [hovered, setHovered] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const API_URL = "http://localhost:8000";
 
   const handleAddToCart = () => {
-    if (item.quantity === 0) return;
+    if (item.quantite === 0) return;
     setAddedToCart(true);
-    onAddToCart(item)
+    onAddToCart(item);
     setTimeout(() => setAddedToCart(false), 2000);
   };
   // Grid view
@@ -52,8 +62,8 @@ export default function ArticleCart({
       {/* Image */}
       <div className="relative aspect-3/4 overflow-hidden bg-gray-50 rounded-t-2xl">
         <img
-          src={item.image}
-          alt={item.name}
+          src={`${API_URL}${item.fichiers[0].fichier}`}
+          alt={item.nom}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             hovered ? "scale-108" : "scale-100"
           }`}
@@ -66,7 +76,7 @@ export default function ArticleCart({
               {item.condition}
             </span>
           )}
-          {item.quantity == 0 && (
+          {item.quantite == 0 && (
             <span className="text-[10px] font-semibold bg-gray-400 text-white px-2 py-0.5 rounded-full">
               Épuisé
             </span>
@@ -92,25 +102,25 @@ export default function ArticleCart({
             className={`w-full text-xs font-semibold transition-all ${
               addedToCart
                 ? "bg-green-500 hover:bg-green-500 text-white"
-                : item.quantity !== 0
+                : item.quantite !== 0
                   ? "bg-white text-gray-900 hover:bg-gray-100"
                   : "bg-gray-500 text-white cursor-not-allowed"
             }`}
             size="sm"
             onClick={handleAddToCart}
-            disabled={item.quantity == 0 ? true : false}
+            disabled={item.quantite == 0 ? true : false}
           >
             <MdOutlineShoppingCart className="mr-1.5 text-sm" />
             {addedToCart
               ? "✓ Ajouté au panier !"
-              : item.quantity !== 0
+              : item.quantite !== 0
                 ? "Ajouter au panier"
                 : "Indisponible"}
           </Button>
           <Button
             className="w-full text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 mt-2"
             size="sm"
-            disabled={item.quantity == 0 ? true : false}
+            disabled={item.quantite == 0 ? true : false}
           >
             <TbListDetails className="mr-1.5 text-sm" />
             Voir les détailles
@@ -121,24 +131,22 @@ export default function ArticleCart({
       {/* Info */}
       <div className="p-3">
         <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
-          {item.brand}
+          {item.marque}
         </p>
         <p className="text-sm font-semibold text-gray-900 truncate mt-0.5 leading-tight">
-          {item.name}
+          {item.nom}
         </p>
 
         <div className="flex items-center gap-1 mt-1">
           {/* <StarRating rating={item.note} /> */}
-          <FaRegHeart className="text-[10px]"/>
-          <span className="text-[10px] text-gray-400 ml-1">
-            ({item.note})
-          </span>
+          <FaRegHeart className="text-[10px]" />
+          <span className="text-[10px] text-gray-400 ml-1">({item.note})</span>
         </div>
 
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-1.5">
             <span className="text-sm font-bold text-gray-900">
-              {formatPrice(item.price)}
+              {formatPrice(item.prix)}
             </span>
           </div>
         </div>

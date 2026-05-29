@@ -74,6 +74,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
               // Stockage des données d'authentification
               localStorage.setItem("token", data.tokens.access);
               localStorage.setItem("user", JSON.stringify(data.utilisateur));
+              localStorage.setItem("role",data.role);
               setUser(data.utilisateur);
 
               // Le texte retourné ici sera affiché par le toast de succès
@@ -106,6 +107,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   function logout() {
     localStorage.removeItem("token"); // supprimer le token stocker dans localStorage après la déconnexion d'un utilisateur
     localStorage.removeItem("user"); // supprimer l'information de l'utilisateur connecter
+    localStorage.removeItem("role"); // supprimer aussi son rôle
     setUser(null); //supprimer aussi ses données
   }
 

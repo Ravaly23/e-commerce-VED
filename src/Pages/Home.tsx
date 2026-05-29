@@ -1,275 +1,294 @@
-import { useState } from "react";
-//import Article from "../components/Article";
-import Fieldset from "../components/Fieldset";
-import formatPrice from "@/utils/formatPrice";
-import LayoutsLambako from "@/layouts/LayoutsLambako";
+import { useState, useMemo } from "react";
+import { useLoaderData } from "react-router-dom";
 import type { Item } from "@/components/ArticleCard";
 import ArticleCart from "@/components/ArticleCard";
+import SidebarFilters, {
+  DEFAULT_FILTERS,
+  MAX_PRICE,
+  type FilterState,
+} from "@/components/Fieldset";
 import { useCart } from "@/hooks/useCart";
 import { Toast } from "./FavoritesPage";
 import type { CartItem } from "@/context/CartContext";
+import { useGenre } from "@/hooks/useGenre";
+import { useSearch } from "@/hooks/useSearch";
+import { MdYoutubeSearchedFor } from "react-icons/md";
+import FilterBottomSheet from "@/components/FilterBottomSheet";
+import LayoutClient from "@/layouts/LayoutClient";
+
+const ITEMS_PER_PAGE = 12;
 
 export default function Home() {
-  const Items: Item[] = [
-    {
-      id: "prod-001",
-      name: "iPhone 15 Pro",
-      brand: "Apple",
-      size: "M",
-      price: 1199.99,
-      quantity: 0,
-      note: 4.8,
-      genre : "Homme",
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électronique",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-002",
-      name: "Air Jordan 1 Retro High",
-      brand: "Nike",
-      size: "M",
-      price: 180.0,
-      quantity: 2,
-      note: 4.5,
-      genre : "Homme",
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Chaussures",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-003",
-      name: "Casque WH-1000XM4",
-      brand: "Sony",
-      size: "M",
-      genre : "Homme",
-      price: 249.5,
-      quantity: 10,
-      note: 4.9,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Audio",
-      condition: "Occasion - Comme neuf",
-    },
-    {
-      id: "prod-004",
-      name: "Montre Speedmaster",
-      brand: "Omega",
-      size: "M",
-      price: 6500.0,
-      quantity: 15,
-      genre : "Homme",
-      note: 4.7,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Horlogerie",
-      condition: "Collection",
-    },
-    {
-      id: "prod-005",
-      name: "MacBook Air M3",
-      brand: "Apple",
-      size: "M",
-      genre : "Homme",
-      price: 1299.0,
-      quantity: 1,
-      note: 4.9,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électronique",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-006",
-      name: "Kindle Paperwhite",
-      brand: "Amazon",
-      size: "M",
-      genre : "Homme",
-      price: 169.99,
-      quantity: 1,
-      note: 4.6,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électronique",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-007",
-      name: "Enceinte Roam",
-      brand: "Sonos",
-      size: "M",
-      genre : "Homme",
-      price: 199.0,
-      quantity: 1,
-      note: 4.3,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Audio",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-008",
-      name: "Veste Nuptse 1996",
-      brand: "The North Face",
-      size: "M",
-      genre : "Homme",
-      price: 350.0,
-      quantity: 1,
-      note: 4.7,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Vêtements",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-009",
-      name: "Cafetière Pixie",
-      brand: "Nespresso",
-      size: "M",
-      genre : "Homme",
-      price: 149.0,
-      quantity: 1,
-      note: 4.4,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électroménager",
-      condition: "Occasion - Très bon état",
-    },
-    {
-      id: "prod-010",
-      name: "Souris MX Master 3S",
-      brand: "Logitech",
-      genre : "Homme",
-      size: "M",
-      price: 129.0,
-      quantity: 3,
-      note: 4.8,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électronique",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-011",
-      name: "Sac à dos Borealis",
-      brand: "The North Face",
-      size: "M",
-      genre : "Homme",
-      price: 115.0,
-      quantity: 1,
-      note: 4.5,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Accessoires",
-      condition: "Neuf",
-    },
-    {
-      id: "prod-012",
-      name: "Clavier G915 TKL",
-      brand: "Logitech",
-      size: "M",
-      genre : "Homme",
-      price: 249.0,
-      quantity: 1,
-      note: 4.6,
-      image:
-        "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-      category: "Électronique",
-      condition: "Reconditionné",
-    },
-  ];
+  // ─── Données loader ───────────────────────────────────────────────────────
+  const allItems = useLoaderData().articles as Item[];
 
-  const category: string[] = [
-    "All Items",
-    "Dresses",
-    "Jackets & Coats",
-    "Jeans",
-    "Shoes",
-    "T-Shirts",
-    "Knitwear",
-  ];
-  const size: string[] = ["All Size", "XS", "S", "M", "L", "XL"];
-  const condition: string[] = [
-    "All conditions",
-    "New with tags",
-    "Like New",
-    "Very Good",
-    "Good",
-  ];
+  // ─── Hooks pérsonnaliser  ───────────────────────────────────────────────────────
+  const { activeGenre } = useGenre();
+  const { valueSearch } = useSearch();
 
-  const maxPrice = Math.max(...Items.map((a) => a.price));
-  const minPrice = Math.min(...Items.map((a) => a.price));
-  const [price, setPrice] = useState([minPrice, maxPrice]);
+  // ─── Filtres (draft = en cours d'édition, applied = actifs) ─────────────
+  const [draftFilters, setDraftFilters] =
+    useState<FilterState>(DEFAULT_FILTERS);
+  const [appliedFilters, setAppliedFilters] =
+    useState<FilterState>(DEFAULT_FILTERS);
 
+  // ─── Pagination ───────────────────────────────────────────────────────────
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ─── Bottom sheet mobile ──────────────────────────────────────────────────
+  const [sheetOpen, setSheetOpen] = useState(false);
+
+  // ─── Toast ────────────────────────────────────────────────────────────────
   const [toast, setToast] = useState({ visible: false, message: "" });
-  const [favorites, setFavorites] = useState<Item[]>(Items);
   const { addItem } = useCart();
+
+  // ─── Filtrage côté client ─────────────────────────────────────────────────
+  const filteredItems = useMemo(() => {
+    return allItems.filter((item) => {
+      const { categories, conditions, sizes, price } = appliedFilters;
+
+      if (
+        valueSearch &&
+        !item.nom.toLocaleLowerCase().includes(valueSearch.toLocaleLowerCase())
+      )
+        return false;
+
+      // Filtre genre (navbar)
+      if (activeGenre === "Femme" && item.genre?.toLowerCase() !== "femme")
+        return false;
+      if (activeGenre === "Homme" && item.genre?.toLowerCase() !== "homme")
+        return false;
+      if (activeGenre === "Nouveautés") {
+        const oneWeekAgo = new Date();
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+        if (!item.date_ajout || new Date(item.date_ajout) < oneWeekAgo)
+          return false;
+      }
+
+      if (categories.length > 0 && !categories.includes(item.category))
+        return false;
+      if (conditions.length > 0 && !conditions.includes(item.condition))
+        return false;
+      if (sizes.length > 0 && item.taille && !sizes.includes(item.taille))
+        return false;
+      if (item.prix < price[0] || item.prix > price[1]) return false;
+
+      return true;
+    });
+  }, [allItems, appliedFilters, activeGenre, valueSearch]);
+
+  // ─── Pagination sur les résultats filtrés ─────────────────────────────────
+  const totalPages = Math.ceil(filteredItems.length / ITEMS_PER_PAGE);
+
+  const currentItems = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredItems.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredItems, currentPage]);
+
+  // ─── Compteur de filtres actifs ───────────────────────────────────────────
+  const activeFilterCount =
+    draftFilters.categories.length +
+    draftFilters.conditions.length +
+    draftFilters.sizes.length +
+    (draftFilters.price[0] > 0 || draftFilters.price[1] < MAX_PRICE ? 1 : 0);
+
+  // ─── Handlers ────────────────────────────────────────────────────────────
+  const handleApply = () => {
+    setAppliedFilters(draftFilters);
+    setCurrentPage(1);
+    window.scroll({ top: 0, behavior: "smooth" });
+  };
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
     setTimeout(() => setToast({ visible: false, message: "" }), 2500);
   };
 
-  // fonction pour ajouter un article dans le favoris
-  const handleRemove = (id: string) => {
-    setFavorites((prev) => prev.filter((f) => f.id !== id));
-    showToast("Article retiré des favoris");
-  };
-
-  // fonction pour ajouter un article dans le panier
   const handleAddToCart = (item: Item) => {
     const cartItem: CartItem = {
-      id: item.id,
-      name: item.name,
-      brand: item.brand,
-      image: item.image,
-      quantity: 1, // quantité par défaut d'un article ajouter dans le panier
-      price: item.price,
-      size: item.size!,
-      stock: item.quantity,
+      id: item.id_article,
+      name: item.nom,
+      brand: item.marque,
+      image: item.fichiers[0].fichier,
+      quantity: 1,
+      price: item.prix,
+      size: item.taille,
+      stock: item.quantite,
     };
-
-    const message: string = addItem(cartItem); // fonction pour ajouter un article dans le panier
-
-    showToast(message);
+    showToast(addItem(cartItem));
   };
 
-  return (
-    <LayoutsLambako page="user">
-      <div className="px-4 py-8 bg-[#F9FAFB]">
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[280px_1fr]">
-          <aside className="hidden lg:block border border-gray-200 rounded-xl p-4 w-64 h-fit">
-            <form className="space-y-6">
-              <Fieldset titre="Category" type="radio" element={category} />
+  const handlePageChange = (page: number) => {
+    if (page < 1 || page > totalPages) return;
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
-              <Fieldset
-                titre={`Price Range : ${formatPrice(price[0])} - ${formatPrice(price[1])}`}
-                type="range"
-                price={price}
-                maxPrice={maxPrice}
-                onValueChange={(value: number[]) => setPrice(value)}
-              />
-              <Fieldset titre="Size" type="radio" element={size} />
-              <Fieldset titre="Condition" type="radio" element={condition} />
-            </form>
+  const getPageNumbers = (): (number | "...")[] => {
+    if (totalPages <= 7)
+      return Array.from({ length: totalPages }, (_, i) => i + 1);
+    const pages: (number | "...")[] = [1];
+    if (currentPage > 3) pages.push("...");
+    for (
+      let i = Math.max(2, currentPage - 1);
+      i <= Math.min(totalPages - 1, currentPage + 1);
+      i++
+    )
+      pages.push(i);
+    if (currentPage < totalPages - 2) pages.push("...");
+    pages.push(totalPages);
+    return pages;
+  };
+
+  // ─── Rendu ────────────────────────────────────────────────────────────────
+  return (
+    <LayoutClient>
+      <div className="px-4 py-8 bg-[#F9FAFB]">
+        <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
+          {/* ── Sidebar ── */}
+          <aside className="hidden lg:block border border-gray-200 rounded-xl p-5 h-fit sticky top-4">
+            <SidebarFilters
+              filters={draftFilters}
+              onChange={setDraftFilters}
+              onApply={handleApply}
+              activeCount={activeFilterCount}
+            />
           </aside>
-          <main className="">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6 justify-items-center-safe">
-              {favorites.map((item) => (
-                <ArticleCart
-                  key={item.id}
-                  item={item}
-                  onAddToCart={handleAddToCart}
-                  onRemove={handleRemove}
-                />
-              ))}
+
+          {/* ── Contenu ── */}
+          <main>
+            {/* En-tête résultats */}
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-sm text-gray-500">
+                <span className="font-semibold text-gray-900">
+                  {filteredItems.length}
+                </span>{" "}
+                article{filteredItems.length > 1 ? "s" : ""} trouvé
+                {filteredItems.length > 1 ? "s" : ""}
+              </p>
+              {totalPages > 1 && (
+                <p className="text-sm text-gray-400">
+                  Page {currentPage} / {totalPages}
+                </p>
+              )}
             </div>
+
+            {/* État : vide */}
+            {filteredItems.length === 0 && (
+              <div className="flex flex-col items-center justify-center py-24 text-center">
+                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                  <span className="text-2xl">
+                    <MdYoutubeSearchedFor />
+                  </span>
+                </div>
+                <p className="text-gray-700 font-semibold">
+                  Aucun article ne correspond aux filtres
+                </p>
+                <p className="text-sm text-gray-400 mt-1">
+                  Essayez de modifier ou réinitialiser vos filtres.
+                </p>
+              </div>
+            )}
+
+            {/* Grille + Pagination */}
+            {currentItems.length > 0 && (
+              <>
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+                  {currentItems.map((item) => (
+                    <ArticleCart
+                      key={item.id_article}
+                      item={item}
+                      onAddToCart={handleAddToCart}
+                      onRemove={() => {}}
+                    />
+                  ))}
+                </div>
+
+                {totalPages > 1 && (
+                  <div className="flex items-center justify-center gap-2 mt-10">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >
+                      ← Précédent
+                    </button>
+
+                    {getPageNumbers().map((page, index) =>
+                      page === "..." ? (
+                        <span
+                          key={`dots-${index}`}
+                          className="w-9 h-9 flex items-center justify-center text-gray-400 text-sm"
+                        >
+                          …
+                        </span>
+                      ) : (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page as number)}
+                          className={`w-9 h-9 flex items-center justify-center rounded-full text-sm font-medium transition-colors ${
+                            currentPage === page
+                              ? "bg-gray-900 text-white shadow-sm"
+                              : "bg-white border border-gray-200 text-gray-600 hover:bg-gray-50"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      ),
+                    )}
+
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-4 py-2 text-sm font-medium rounded-full border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+                    >
+                      Suivant →
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
           </main>
         </div>
       </div>
+      {/* ── FAB Filtres (mobile uniquement) ── */}
+      <button
+        onClick={() => setSheetOpen(true)}
+        className="fixed bottom-6 right-5 z-30 lg:hidden flex items-center gap-2 px-4 py-3 bg-gray-900 text-white rounded-full shadow-lg hover:bg-gray-700 active:scale-95 transition-all"
+        aria-label="Ouvrir les filtres"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="w-4 h-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          aria-hidden="true"
+        >
+          <line x1="4" y1="6" x2="20" y2="6" />
+          <line x1="8" y1="12" x2="16" y2="12" />
+          <line x1="11" y1="18" x2="13" y2="18" />
+        </svg>
+        <span className="text-sm font-medium">Filtres</span>
+        {activeFilterCount > 0 && (
+          <span className="w-5 h-5 flex items-center justify-center rounded-full bg-white text-gray-900 text-xs font-bold">
+            {activeFilterCount}
+          </span>
+        )}
+      </button>
+      {/* ── Bottom sheet mobile ── */}
+      <FilterBottomSheet
+        open={sheetOpen}
+        onClose={() => setSheetOpen(false)}
+        filters={draftFilters}
+        onChange={setDraftFilters}
+        onApply={handleApply}
+        activeCount={activeFilterCount}
+      />
       <Toast message={toast.message} visible={toast.visible} />
-    </LayoutsLambako>
+    </LayoutClient>
   );
 }

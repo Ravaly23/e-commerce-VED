@@ -1,36 +1,21 @@
 import type React from "react";
 import BarreNavigation from "../components/BarreNavigation";
-<<<<<<< HEAD
-import { useNavigation } from "react-router-dom";
-import { Spinner } from "@/components/ui/spinner";
-=======
-import { Outlet } from "react-router-dom";
 
->>>>>>> 5ddfb89bf8337c09d36719608f3078034c6c926a
 interface LayoutsProp{
     children? : React.ReactNode;
     page?: string;
     onSearch?: (find:string) => void;
 }
 
-<<<<<<< HEAD
-export default function LayoutsLambako({children , page}: LayoutsProp) {
-  const navigation = useNavigation();
-=======
 export default function LayoutsLambako({children , page,onSearch}: LayoutsProp) {
  
->>>>>>> 5ddfb89bf8337c09d36719608f3078034c6c926a
   return (
     <>
       <header>
          <BarreNavigation type={page} onSearch={onSearch}/>
       </header>
       <main className="">
-<<<<<<< HEAD
-         {navigation.state === "loading" ? <Spinner /> : children}
-=======
-         {children !== null ? children: <Outlet />}
->>>>>>> 5ddfb89bf8337c09d36719608f3078034c6c926a
+         {children}
       </main>
       <footer className="bg-white pt-16 pb-8 px-8 md:pl-8 md:pr-25 border-t border-gray-100 shadow-sm ">
         <div className="max-w-7xl mx-auto flex flex-col gap-y-10 md:flex-row md:justify-between md:gap-y-0">

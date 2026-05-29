@@ -201,24 +201,11 @@ export default function NavConnected({
           </h1>
         </div>
 
-<<<<<<< HEAD
-        {/* 2. LIENS (Centrés) */}
-        <div className="hidden md:inline-flex">
-
-           <Input 
-           type="text" 
-           placeholder="Rechercher des articles"
-           value={valueSearch}
-           iconRight={<FaSearch />}
-           onChange={(e) => setValueSearch(e.target.value)}
-          />
-=======
         {/* Barre de recherche (desktop) */}
         <form
           onSubmit={handleSearchSubmit}
           className="hidden md:flex flex-1 max-w-sm mx-6"
         >
->>>>>>> a40814caa957a9fb07b8f58058ee904765ba653c
           <Input
             type="text"
             placeholder="Rechercher un article..."

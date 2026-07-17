@@ -31,7 +31,7 @@ function ProfileDropdown({
   user,
   onLogout,
 }: {
-  user: { username?: string } | null;
+  user: { username?: string; id: string } | null;
   onLogout: () => void;
 }) {
   const [open, setOpen] = useState(false);
@@ -81,6 +81,17 @@ function ProfileDropdown({
               <p className="text-sm font-semibold truncate">{user.username}</p>
             </div>
           )}
+
+          <button
+            className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors flex items-center gap-2"
+            onClick={() => {
+              navigate(`/profil/${user?.id}`);
+              setOpen(false);
+            }}
+          >
+            <FaRegUser />
+            Mon profil
+          </button>
 
           <button
             className="w-full text-left px-3 py-2 text-sm hover:bg-gray-50 transition-colors flex items-center gap-2"

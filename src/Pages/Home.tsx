@@ -1,5 +1,5 @@
 import { useState, useMemo } from "react";
-import { useLoaderData } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
 import type { Item } from "@/components/ArticleCard";
 import ArticleCart from "@/components/ArticleCard";
 import SidebarFilters, {
@@ -15,12 +15,15 @@ import { useSearch } from "@/hooks/useSearch";
 import { MdYoutubeSearchedFor } from "react-icons/md";
 import FilterBottomSheet from "@/components/FilterBottomSheet";
 import LayoutClient from "@/layouts/LayoutClient";
+import api from "@/services/api";
 
 const ITEMS_PER_PAGE = 12;
 
 export default function Home() {
+  const navigation = useNavigate();
+
   // ─── Données loader ───────────────────────────────────────────────────────
-  const allItems = useLoaderData().articles as Item[];
+  const allItems = useLoaderData() as Item[];
 
   // ─── Hooks pérsonnaliser  ───────────────────────────────────────────────────────
   const { activeGenre } = useGenre();
@@ -37,6 +40,13 @@ export default function Home() {
 
   // ─── Bottom sheet mobile ──────────────────────────────────────────────────
   const [sheetOpen, setSheetOpen] = useState(false);
+
+  // ─── Comptteur article favoris ────────────────────────────────────────────
+  const totalArticleFavoris: number = allItems.filter(
+    (allItem) => allItem.isFavoris,
+  ).length;
+
+  const [favCount, setFavCount] = useState(totalArticleFavoris); // suivre l'état du nombre total des articles dans favoris
 
   // ─── Toast ────────────────────────────────────────────────────────────────
   const [toast, setToast] = useState({ visible: false, message: "" });
@@ -104,6 +114,7 @@ export default function Home() {
     setTimeout(() => setToast({ visible: false, message: "" }), 2500);
   };
 
+  // pour ajouter un article dans le panier
   const handleAddToCart = (item: Item) => {
     const cartItem: CartItem = {
       id: item.id_article,
@@ -118,6 +129,41 @@ export default function Home() {
     showToast(addItem(cartItem));
   };
 
+  // pour voir un detail sur une article particulier
+  const handleSeeDetail = (item: Item) => {
+    navigation(`/article/${item.id_article}`);
+  };
+
+  // pour ajouter ou supprimer un article dans le favoris
+  const handleAddLike = async (item: Item, id_user: string) => {
+    const body = {
+      id_article: item.id_article,
+      id_client: id_user,
+    };
+
+    try {
+      const { data, status } = await api.post(
+        "article/toggle_note_article/",
+        body,
+      );
+
+      if (status !== 200 && status !== 201) throw new Error(data.message);
+
+      if (data.like) {
+        showToast(item.nom + " ajouté(e) dans tes favoris");
+        setFavCount((prev) => prev + 1); // synchroniser le badge qui indique le nombre total des articles dans favoris
+      } else {
+        showToast(item.nom + " retiré(e) dans tes favoris");
+        setFavCount((prev) => prev - 1); // synchroniser le badge qui indique le nombre total des articles dans favoris
+      }
+
+      return data;
+    } catch (error: any) {
+      console.error(error.response?.message);
+    }
+  };
+
+  // pour change de page (pagination)
   const handlePageChange = (page: number) => {
     if (page < 1 || page > totalPages) return;
     setCurrentPage(page);
@@ -142,7 +188,7 @@ export default function Home() {
 
   // ─── Rendu ────────────────────────────────────────────────────────────────
   return (
-    <LayoutClient>
+    <LayoutClient favCount={favCount}>
       <div className="px-4 py-8 bg-[#F9FAFB]">
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-[260px_1fr]">
           {/* ── Sidebar ── */}
@@ -199,7 +245,8 @@ export default function Home() {
                       key={item.id_article}
                       item={item}
                       onAddToCart={handleAddToCart}
-                      onRemove={() => {}}
+                      onChangeFavorite={handleAddLike}
+                      onSeeDetail={handleSeeDetail}
                     />
                   ))}
                 </div>

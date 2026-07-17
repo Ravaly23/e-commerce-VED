@@ -1,15 +1,19 @@
 import NavConnected from "@/components/NavConnected";
-import type { ReactNode } from "react";
-export default function LayoutClient({children} :{children : ReactNode}) {
+import { type ReactNode } from "react";
+export default function LayoutClient({
+  favCount,
+  children,
+}: {
+  children: ReactNode;
+  favCount?: number;
+}) {
   return (
     <>
       <header>
-        <NavConnected />
+        <NavConnected favoritesCount={favCount} />
       </header>
 
-      <main>
-        {children}
-      </main>
+      <main>{children}</main>
     </>
   );
 }

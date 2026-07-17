@@ -1,3 +1,4 @@
+// composant pour afficher les articles dans la CartPages
 import { FiTrash2 } from "react-icons/fi";
 import { HiMinus, HiPlus } from "react-icons/hi";
 import { MdFavorite, MdFavoriteBorder } from "react-icons/md";
@@ -28,11 +29,6 @@ export default function CartRow({
           alt={item.name}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
         />
-        {/* {item.discount && (
-          <span className="absolute top-1.5 left-1.5 text-[10px] font-bold bg-red-500 text-white px-1.5 py-0.5 rounded-full">
-            -{item.discount}%
-          </span>
-        )} */}
       </div>
 
       {/* Détails */}

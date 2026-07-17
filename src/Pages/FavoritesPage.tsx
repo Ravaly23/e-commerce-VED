@@ -4,152 +4,20 @@ import {
   MdFavorite,
   MdOutlineShoppingCart,
 } from "react-icons/md";
-import { FiTrash2, FiFilter, FiGrid, FiList, FiShare2 } from "react-icons/fi";
-import { HiOutlineStar, HiStar } from "react-icons/hi";
-import { TbListDetails } from "react-icons/tb";
+import { FiTrash2, FiFilter, FiGrid, FiList } from "react-icons/fi";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { useNavigate } from "react-router-dom";
+import { useLoaderData, useNavigate } from "react-router-dom";
+import type { Item } from "@/components/ArticleCard";
+import { FaRegHeart } from "react-icons/fa";
+import formatPrice from "@/utils/formatPrice";
+import type { CartItem } from "@/context/CartContext";
+import { useCart } from "@/hooks/useCart";
+import { useAuth } from "@/context/AuthContext";
+import api from "@/services/api";
+import { TbListDetails } from "react-icons/tb";
 
-// ─── Types ────────────────────────────────────────────────────────────────────
-interface FavoriteItem {
-  id: string;
-  name: string;
-  brand: string;
-  price: number;
-  originalPrice?: number;
-  image: string;
-  category: string;
-  colors: string[];
-  sizes: string[];
-  rating: number;
-  reviewCount: number;
-  inStock: boolean;
-  isNew?: boolean;
-  discount?: number;
-}
-
-// ─── Mock data ────────────────────────────────────────────────────────────────
-const MOCK_FAVORITES: FavoriteItem[] = [
-  {
-    id: "1",
-    name: "Robe Midi Florale",
-    brand: "Élara Paris",
-    price: 89000,
-    originalPrice: 120000,
-    image:
-      "https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?w=400&q=80",
-    category: "Femme",
-    colors: ["#E8C5A0", "#2C3E50", "#C0392B"],
-    sizes: ["XS", "S", "M", "L"],
-    rating: 4.5,
-    reviewCount: 128,
-    inStock: true,
-    discount: 26,
-  },
-  {
-    id: "2",
-    name: "Veste en Lin Beige",
-    brand: "Maison Soa",
-    price: 145000,
-    image:
-      "https://images.unsplash.com/photo-1594938298603-c8148c4b4e58?w=400&q=80",
-    category: "Femme",
-    colors: ["#D4C5A9", "#8B7355"],
-    sizes: ["S", "M", "L", "XL"],
-    rating: 4.8,
-    reviewCount: 64,
-    inStock: true,
-    isNew: true,
-  },
-  {
-    id: "3",
-    name: "Chemise Oxford Slim",
-    brand: "Gentleman MG",
-    price: 72000,
-    originalPrice: 95000,
-    image:
-      "https://images.unsplash.com/photo-1602810318383-e386cc2a3ccf?w=400&q=80",
-    category: "Homme",
-    colors: ["#FFFFFF", "#4A90D9", "#2C3E50"],
-    sizes: ["S", "M", "L", "XL", "XXL"],
-    rating: 4.3,
-    reviewCount: 209,
-    inStock: false,
-    discount: 24,
-  },
-  {
-    id: "4",
-    name: "Sneakers Canvas Blanc",
-    brand: "Urban Step",
-    price: 58000,
-    image:
-      "https://images.unsplash.com/photo-1542291026-7eec264c27ff?w=400&q=80",
-    category: "Accessoires",
-    colors: ["#FFFFFF", "#1A1A1A"],
-    sizes: ["38", "39", "40", "41", "42", "43"],
-    rating: 4.6,
-    reviewCount: 342,
-    inStock: true,
-    isNew: true,
-  },
-  {
-    id: "5",
-    name: "Sac Tote Cuir Naturel",
-    brand: "Maison Soa",
-    price: 198000,
-    image:
-      "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=400&q=80",
-    category: "Accessoires",
-    colors: ["#C8A882", "#1A1A1A"],
-    sizes: ["Unique"],
-    rating: 4.9,
-    reviewCount: 87,
-    inStock: true,
-  },
-  {
-    id: "6",
-    name: "Pantalon Cargo Kaki",
-    brand: "Street Mada",
-    price: 67000,
-    originalPrice: 89000,
-    image:
-      "https://images.unsplash.com/photo-1624378439575-d8705ad7ae80?w=400&q=80",
-    category: "Homme",
-    colors: ["#6B7C5C", "#1A1A1A", "#8B7355"],
-    sizes: ["S", "M", "L", "XL"],
-    rating: 4.2,
-    reviewCount: 156,
-    inStock: true,
-    discount: 25,
-  },
-];
-
-const CATEGORIES = ["Tous", "Femme", "Homme", "Accessoires", "Enfant"];
-
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-function formatPrice(price: number): string {
-  return (
-    new Intl.NumberFormat("fr-MG", {
-      style: "decimal",
-      minimumFractionDigits: 0,
-    }).format(price) + " Ar"
-  );
-}
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <div className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) =>
-        star <= Math.floor(rating) ? (
-          <HiStar key={star} className="text-amber-400 text-xs" />
-        ) : (
-          <HiOutlineStar key={star} className="text-gray-300 text-xs" />
-        ),
-      )}
-    </div>
-  );
-}
+const CATEGORIES = ["Tous", "Femme", "Homme"];
 
 // ─── Product Card ─────────────────────────────────────────────────────────────
 function FavoriteCard({
@@ -158,19 +26,24 @@ function FavoriteCard({
   onRemove,
   onAddToCart,
 }: {
-  item: FavoriteItem;
+  item: Item;
   view: "grid" | "list";
   onRemove: (id: string) => void;
-  onAddToCart: (id: string) => void;
+  onAddToCart: (item: Item) => void;
 }) {
-  const [hovered, setHovered] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
+  const [hovered, setHovered] = useState(false);
+  const navigation = useNavigate();
 
   const handleAddToCart = () => {
-    if (!item.inStock) return;
+    if (item.quantite === 0) return;
     setAddedToCart(true);
-    onAddToCart(item.id);
+    onAddToCart(item);
     setTimeout(() => setAddedToCart(false), 2000);
+  };
+
+  const handleSeeDetail = (item: Item) => {
+    navigation(`/article/${item.id_article}`);
   };
 
   if (view === "list") {
@@ -182,53 +55,38 @@ function FavoriteCard({
         {/* Image */}
         <div className="relative shrink-0 w-24 h-28 rounded-lg overflow-hidden bg-gray-50">
           <img
-            src={item.image}
-            alt={item.name}
+            src={item.fichiers[0].fichier}
+            alt={item.fichiers[0].type}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
           />
-          {item.discount && (
-            <span className="absolute top-1 left-1 text-[10px] font-semibold bg-red-500 text-white px-1.5 py-0.5 rounded">
-              -{item.discount}%
-            </span>
-          )}
         </div>
 
         {/* Info */}
         <div className="flex-1 min-w-0">
           <p className="text-xs text-gray-400 font-medium uppercase tracking-wider">
-            {item.brand}
+            {item.marque}
           </p>
           <p className="text-sm font-semibold text-gray-900 truncate mt-0.5">
-            {item.name}
+            {item.nom}
           </p>
           <div className="flex items-center gap-1.5 mt-1">
-            <StarRating rating={item.rating} />
-            <span className="text-xs text-gray-400">({item.reviewCount})</span>
+            <div className="flex items-center gap-2 mt-1">
+              <FaRegHeart className="text-red-600 text-xs" />
+              <span className="text-xs text-gray-400 ml-1">
+                {item.total_likes > 0 ? item.total_likes : "Aucune note"}
+              </span>
+            </div>
           </div>
           <div className="flex items-center gap-2 mt-1.5">
             <span className="text-sm font-bold text-gray-900">
-              {formatPrice(item.price)}
+              {formatPrice(item.prix)}
             </span>
-            {item.originalPrice && (
-              <span className="text-xs text-gray-400 line-through">
-                {formatPrice(item.originalPrice)}
-              </span>
-            )}
-          </div>
-          <div className="flex items-center gap-1 mt-1.5">
-            {item.colors.map((c) => (
-              <span
-                key={c}
-                className="w-3 h-3 rounded-full border border-gray-200"
-                style={{ background: c }}
-              />
-            ))}
           </div>
         </div>
 
         {/* Actions */}
         <div className="flex flex-col items-end gap-2 shrink-0">
-          {!item.inStock && (
+          {item.quantite === 0 && (
             <Badge
               variant="outline"
               className="text-xs text-gray-400 border-gray-200"
@@ -241,18 +99,18 @@ function FavoriteCard({
             className={`text-xs transition-all ${
               addedToCart
                 ? "bg-green-600 hover:bg-green-600 text-white"
-                : item.inStock
+                : item.quantite !== 0
                   ? "bg-gray-900 hover:bg-gray-700 text-white"
                   : "bg-gray-100 text-gray-400 cursor-not-allowed"
             }`}
             onClick={handleAddToCart}
-            disabled={!item.inStock}
+            disabled={item.quantite === 0}
           >
             <MdOutlineShoppingCart className="mr-1" />
             {addedToCart ? "Ajouté !" : "Ajouter au panier"}
           </Button>
           <button
-            onClick={() => onRemove(item.id)}
+            onClick={() => onRemove(item.id_article)}
             className="text-xs text-gray-400 hover:text-red-500 flex items-center gap-1 transition-colors"
           >
             <FiTrash2 className="text-xs" />
@@ -274,39 +132,20 @@ function FavoriteCard({
       {/* Image */}
       <div className="relative aspect-3/4 overflow-hidden bg-gray-50">
         <img
-          src={item.image}
-          alt={item.name}
+          src={item.fichiers[0].fichier}
+          alt={item.fichiers[0].type}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             hovered ? "scale-108" : "scale-100"
           }`}
         />
 
-        {/* Badges */}
-        <div className="absolute top-3 left-3 flex flex-col gap-1">
-          {item.isNew && (
-            <span className="text-[10px] font-bold bg-gray-900 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">
-              Nouveau
-            </span>
-          )}
-          {item.discount && (
-            <span className="text-[10px] font-bold bg-red-500 text-white px-2 py-0.5 rounded-full">
-              -{item.discount}%
-            </span>
-          )}
-          {!item.inStock && (
-            <span className="text-[10px] font-semibold bg-gray-400 text-white px-2 py-0.5 rounded-full">
-              Épuisé
-            </span>
-          )}
-        </div>
-
-        {/* Remove button enleve favoris*/} 
+        {/* Remove button enleve favoris*/}
         <button
-          onClick={() => onRemove(item.id)}
+          onClick={() => onRemove(item.id_article)}
           className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 opacity-0 group-hover:opacity-100"
           aria-label="Retirer des favoris"
         >
-          <MdFavorite className="text-sm" />
+          <MdFavorite className="text-sm text-red-600" />
         </button>
 
         {/* CTA hover overlay */}
@@ -319,25 +158,26 @@ function FavoriteCard({
             className={`w-full text-xs font-semibold transition-all ${
               addedToCart
                 ? "bg-green-500 hover:bg-green-500 text-white"
-                : item.inStock
+                : item.quantite !== 0
                   ? "bg-white text-gray-900 hover:bg-gray-100"
                   : "bg-gray-500 text-white cursor-not-allowed"
             }`}
             size="sm"
             onClick={handleAddToCart}
-            disabled={!item.inStock}
+            disabled={item.quantite === 0}
           >
             <MdOutlineShoppingCart className="mr-1.5 text-sm" />
             {addedToCart
               ? "✓ Ajouté au panier !"
-              : item.inStock
+              : item.quantite !== 0
                 ? "Ajouter au panier"
                 : "Indisponible"}
           </Button>
           <Button
             className="w-full text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 mt-2"
             size="sm"
-            disabled={!item.inStock}
+            disabled={item.quantite === 0}
+            onClick={() => handleSeeDetail(item)}
           >
             <TbListDetails className="mr-1.5 text-sm" />
             Voir les détailles
@@ -348,44 +188,27 @@ function FavoriteCard({
       {/* Info */}
       <div className="p-3">
         <p className="text-[10px] text-gray-400 font-semibold uppercase tracking-widest">
-          {item.brand}
+          {item.marque}
         </p>
         <p className="text-sm font-semibold text-gray-900 truncate mt-0.5 leading-tight">
-          {item.name}
+          {item.marque}
         </p>
 
+        {/* nombre like */}
         <div className="flex items-center gap-1 mt-1">
-          <StarRating rating={item.rating} />
-          <span className="text-[10px] text-gray-400">
-            ({item.reviewCount})
-          </span>
+          <div className="flex items-center gap-2 mt-1">
+            <FaRegHeart className="text-red-600 text-xs" />
+            <span className="text-xs text-gray-400 ml-1">
+              {item.total_likes > 0 ? item.total_likes : "Aucune note"}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center justify-between mt-2">
           <div className="flex items-center gap-1.5">
             <span className="text-sm font-bold text-gray-900">
-              {formatPrice(item.price)}
+              {formatPrice(item.prix)}
             </span>
-            {item.originalPrice && (
-              <span className="text-xs text-gray-400 line-through">
-                {formatPrice(item.originalPrice)}
-              </span>
-            )}
-          </div>
-          {/* Color swatches */}
-          <div className="flex items-center gap-1">
-            {item.colors.slice(0, 3).map((c) => (
-              <span
-                key={c}
-                className="w-3.5 h-3.5 rounded-full border border-gray-200 shadow-sm"
-                style={{ background: c }}
-              />
-            ))}
-            {item.colors.length > 3 && (
-              <span className="text-[10px] text-gray-400">
-                +{item.colors.length - 3}
-              </span>
-            )}
           </div>
         </div>
       </div>
@@ -418,7 +241,13 @@ function EmptyState({ onBrowse }: { onBrowse: () => void }) {
 }
 
 // ─── Toast ────────────────────────────────────────────────────────────────────
-export function Toast({ message, visible }: { message: string; visible: boolean }) {
+export function Toast({
+  message,
+  visible,
+}: {
+  message: string;
+  visible: boolean;
+}) {
   return (
     <div
       className={`fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 text-white text-sm px-5 py-2.5 rounded-full shadow-lg z-50 transition-all duration-300 ${
@@ -434,36 +263,86 @@ export function Toast({ message, visible }: { message: string; visible: boolean 
 
 // ─── Page principale ──────────────────────────────────────────────────────────
 export default function FavoritesPage() {
+  const allItems = useLoaderData();
   const navigate = useNavigate();
-  const [favorites, setFavorites] = useState<FavoriteItem[]>(MOCK_FAVORITES);
+  const [favorites, setFavorites] = useState<Item[]>(allItems);
   const [activeCategory, setActiveCategory] = useState("Tous");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [sortBy, setSortBy] = useState<
-    "default" | "price_asc" | "price_desc" | "rating"
+    "default" | "price_asc" | "price_desc" | "note"
   >("default");
   const [toast, setToast] = useState({ visible: false, message: "" });
   const [selectMode, setSelectMode] = useState(false);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const { addItem } = useCart();
+  const { user } = useAuth();
 
   const showToast = (message: string) => {
     setToast({ visible: true, message });
     setTimeout(() => setToast({ visible: false, message: "" }), 2500);
   };
 
-  const handleRemove = (id: string) => {
-    setFavorites((prev) => prev.filter((f) => f.id !== id));
-    showToast("Article retiré des favoris");
+  const handleRemove = async (id: string) => {
+    setFavorites((prev) => prev.filter((f) => f.id_article !== id));
+
+    const body = {
+      id_article: id,
+      id_client: user?.id,
+    };
+
+    try {
+      const { data, status } = await api.post(
+        "article/toggle_note_article/",
+        body,
+      );
+
+      if (status !== 200 && status !== 201) throw new Error(data.message);
+      showToast("Article retiré des favoris");
+    } catch (error) {}
   };
 
   const handleRemoveSelected = () => {
-    setFavorites((prev) => prev.filter((f) => !selected.has(f.id)));
+    const tabSelected = Array.from(selected); // transformer en tableau id_article séletionner
+
+    setFavorites((prev) => prev.filter((f) => !selected.has(f.id_article)));
+
+    tabSelected.map(async (item) => {
+      const body = {
+        id_article: item,
+        id_client: user?.id,
+      };
+
+      try {
+        const { data, status } = await api.post(
+          "article/toggle_note_article/",
+          body,
+        );
+
+        if (status !== 200 && status !== 201) throw new Error(data.message);
+
+        showToast("Article retiré des favoris");
+      } catch (error: any) {
+        console.error(error.response?.message);
+      }
+    });
+
     showToast(`${selected.size} article(s) retiré(s)`);
     setSelected(new Set());
     setSelectMode(false);
   };
 
-  const handleAddToCart = (id: string) => {
-    showToast("Article ajouté au panier !");
+  const handleAddToCart = (item: Item) => {
+    const cartItem: CartItem = {
+      id: item.id_article,
+      name: item.nom,
+      brand: item.marque,
+      image: item.fichiers[0].fichier,
+      quantity: 1,
+      price: item.prix,
+      size: item.taille,
+      stock: item.quantite,
+    };
+    showToast(addItem(cartItem));
   };
 
   const toggleSelect = (id: string) => {
@@ -478,9 +357,9 @@ export default function FavoritesPage() {
   const filtered = favorites
     .filter((f) => activeCategory === "Tous" || f.category === activeCategory)
     .sort((a, b) => {
-      if (sortBy === "price_asc") return a.price - b.price;
-      if (sortBy === "price_desc") return b.price - a.price;
-      if (sortBy === "rating") return b.rating - a.rating;
+      if (sortBy === "price_asc") return a.prix - b.prix;
+      if (sortBy === "price_desc") return b.prix - a.prix;
+      if (sortBy === "note") return b.total_likes - a.total_likes;
       return 0;
     });
 
@@ -496,7 +375,7 @@ export default function FavoritesPage() {
       `}</style>
 
       <div className="min-h-screen bg-gray-50">
-        <div className="max-w-6xl mx-auto px-4 md:px-6 py-8">
+        <div className="mx-auto px-8 md:px-6 py-8">
           {/* ── EN-TÊTE ───────────────────────────────────────────────── */}
           <div className="flex items-start justify-between mb-6">
             <div>
@@ -560,6 +439,7 @@ export default function FavoritesPage() {
                       cat === "Tous"
                         ? favorites.length
                         : favorites.filter((f) => f.category === cat).length;
+
                     if (cat !== "Tous" && count === 0) return null;
                     return (
                       <button
@@ -633,21 +513,21 @@ export default function FavoritesPage() {
                 <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                   {filtered.map((item, i) => (
                     <div
-                      key={item.id}
+                      key={item.id_article}
                       style={{ animationDelay: `${i * 60}ms` }}
                       className="relative"
                     >
                       {/* Checkbox sélection */}
                       {selectMode && (
                         <button
-                          onClick={() => toggleSelect(item.id)}
+                          onClick={() => toggleSelect(item.id_article)}
                           className={`absolute top-2 left-2 z-10 w-5 h-5 rounded flex items-center justify-center border-2 transition-all ${
-                            selected.has(item.id)
+                            selected.has(item.id_article)
                               ? "bg-gray-900 border-gray-900 text-white"
                               : "bg-white border-gray-300"
                           }`}
                         >
-                          {selected.has(item.id) && (
+                          {selected.has(item.id_article) && (
                             <span className="text-xs">✓</span>
                           )}
                         </button>
@@ -665,7 +545,7 @@ export default function FavoritesPage() {
                 <div className="flex flex-col gap-3">
                   {filtered.map((item, i) => (
                     <div
-                      key={item.id}
+                      key={item.id_article}
                       style={{ animationDelay: `${i * 60}ms` }}
                     >
                       <FavoriteCard
@@ -683,15 +563,15 @@ export default function FavoritesPage() {
               {filtered.length > 0 && (
                 <div className="mt-10 pt-6 border-t border-gray-200 flex flex-col sm:flex-row items-center justify-between gap-4">
                   <p className="text-sm text-gray-500">
-                    {filtered.filter((f) => f.inStock).length} article(s)
+                    {filtered.filter((f) => f.quantite).length} article(s)
                     disponible(s) à l'achat
                   </p>
                   <Button
                     className="bg-gray-900 hover:bg-gray-700 text-white text-sm px-6 flex items-center gap-2"
                     onClick={() => {
                       filtered
-                        .filter((f) => f.inStock)
-                        .forEach((f) => handleAddToCart(f.id));
+                        .filter((f) => f.quantite)
+                        .forEach((f) => handleAddToCart(f));
                       showToast(
                         "Tous les articles disponibles ajoutés au panier !",
                       );

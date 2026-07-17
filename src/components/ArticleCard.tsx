@@ -1,9 +1,12 @@
+// composants qui affiche un article
 import { useState } from "react";
+import { useAuth } from "@/context/AuthContext";
 import { MdFavorite, MdOutlineShoppingCart } from "react-icons/md";
 import { FaRegHeart } from "react-icons/fa";
 import { Button } from "./ui/button";
 import { TbListDetails } from "react-icons/tb";
 import formatPrice from "@/utils/formatPrice";
+import { Toggle } from "@/components/ui/toggle";
 
 interface Fichier {
   id_fichier: string;
@@ -18,7 +21,7 @@ export interface Item {
   nom: string;
   description: string;
   prix: number;
-  note: number;
+  total_likes: number;
   fichiers: Fichier[];
   date_ajout: string;
   date_ajout_relative: string;
@@ -30,20 +33,26 @@ export interface Item {
   condition: string;
   id_vendeur: string;
   genre: string;
+  isFavoris?: boolean;
 }
 
 export default function ArticleCart({
   item,
-  onRemove,
+  onChangeFavorite,
   onAddToCart,
+  onSeeDetail,
 }: {
   item: Item;
-  onRemove: (id: string) => void; // enlever un article dans le favoris
+  onChangeFavorite: (item: Item, id_user: string) => void; // enlever un article dans le favoris
   onAddToCart: (item: Item) => void;
+  onSeeDetail: (item: Item) => void;
 }) {
   const [hovered, setHovered] = useState(false);
   const [addedToCart, setAddedToCart] = useState(false);
-  const API_URL = "http://localhost:8000";
+  const [nombreLike, SetNombreLike] = useState(item.total_likes);
+  const [isFavorite, setIsFavorite] = useState(item.isFavoris);
+
+  const { user } = useAuth();
 
   const handleAddToCart = () => {
     if (item.quantite === 0) return;
@@ -51,7 +60,21 @@ export default function ArticleCart({
     onAddToCart(item);
     setTimeout(() => setAddedToCart(false), 2000);
   };
-  // Grid view
+
+  const handleSeeDetail = () => {
+    onSeeDetail(item);
+  };
+
+  const handleAddLike = async () => {
+    const data: any = await onChangeFavorite(item, user!.id);
+
+    if (data.like) {
+      SetNombreLike((prev) => prev + 1);
+    } else {
+      SetNombreLike((prev) => prev - 1);
+    }
+  };
+
   return (
     <div
       className="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-lg hover:border-gray-200 transition-all duration-300"
@@ -62,7 +85,7 @@ export default function ArticleCart({
       {/* Image */}
       <div className="relative aspect-3/4 overflow-hidden bg-gray-50 rounded-t-2xl">
         <img
-          src={`${API_URL}${item.fichiers[0].fichier}`}
+          src={`${item.fichiers[0].fichier}`}
           alt={item.nom}
           className={`w-full h-full object-cover transition-transform duration-500 ${
             hovered ? "scale-108" : "scale-100"
@@ -83,14 +106,22 @@ export default function ArticleCart({
           )}
         </div>
 
-        {/* Remove button  boutton j'adore*/}
-        <button
-          // onClick={() => onRemove(item.id)}
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-white shadow-sm text-red-400 hover:text-red-600 hover:bg-red-50 transition-all duration-150 opacity-0 group-hover:opacity-100"
-          aria-label="Retirer des favoris"
+        {/* toggle button  boutton j'adore*/}
+        <Toggle
+          aria-label="Toggle favorite"
+          pressed={isFavorite}
+          onPressedChange={(isFavorite) => {
+            setIsFavorite(isFavorite);
+            handleAddLike();
+          }}
+          size="sm"
+          variant="outline"
+          className={`absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full transition-all duration-150 opacity-0 group-hover:opacity-100 ${isFavorite ? "bg-white" : "bg-gray-50"}`}
         >
-          <MdFavorite className="text-sm" />
-        </button>
+          <MdFavorite
+            className={`${isFavorite ? "text-red-600" : "text-red-400"}`}
+          />
+        </Toggle>
 
         {/* CTA hover overlay */}
         <div
@@ -121,6 +152,7 @@ export default function ArticleCart({
             className="w-full text-xs font-semibold bg-gray-900 text-white hover:bg-gray-800 mt-2"
             size="sm"
             disabled={item.quantite == 0 ? true : false}
+            onClick={handleSeeDetail}
           >
             <TbListDetails className="mr-1.5 text-sm" />
             Voir les détailles
@@ -138,9 +170,12 @@ export default function ArticleCart({
         </p>
 
         <div className="flex items-center gap-1 mt-1">
-          {/* <StarRating rating={item.note} /> */}
-          <FaRegHeart className="text-[10px]" />
-          <span className="text-[10px] text-gray-400 ml-1">({item.note})</span>
+          <div className="flex items-center gap-2 mt-1">
+            <FaRegHeart className="text-red-600 text-xs" />
+            <span className="text-xs text-gray-400 ml-1">
+              {nombreLike > 0 ? nombreLike : "Aucune note"}
+            </span>
+          </div>
         </div>
 
         <div className="flex items-center justify-between mt-2">
